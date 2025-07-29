@@ -63,91 +63,61 @@
 `define RD3     4'b1111
 
 module alu (
-    input            reset,     // Async reset
-    input      [3:0] command,   // Mnemonic
-    input            carry_in,  // Carry in from the previous command
-    input      [3:0] immediate, // Immediate input (4bit LSB of memory out)
-    input      [3:0] a,         // Value of register A
-    input      [3:0] b,         // Value of register B
-    input      [3:0] in,        // External input
-    output reg       write_a,   // Write to Register A
-    output reg       write_b,   // Write to Register B
-    output reg       write_out, // Write to External Output
-    output reg       jump,      // Jump (Write to PC)
-    output reg       carry_out, // Carry Out
-    output reg [3:0] data       // Result of calcuration
-) ;
+    input  wire [3:0] alu_op,       // decoder からの ALU操作コード
+    input  wire [3:0] acc_in,       // ACCの値
+    input  wire [3:0] temp_in,      // Tempの値
+    input  wire [3:0] opa,          // オペランド（ROM下位4bit、またはレジスタ値）
+    input  wire       carry_in,     // CCのCarryフラグ（ADD, SUB用）
 
-    always @(reset or command or carry_in or immediate or a or b or in) begin
-        if (reset == 1'b1) begin
-            write_a   <= 1'b0 ;
-            write_b   <= 1'b0 ;
-            write_out <= 1'b0 ;
-            jump      <= 1'b0 ;
-            carry_out <= 1'b0 ;
-            data      <= 4'd0 ;
-        end else begin
-            case (command)
-            `NOP   : begin                  ; end
-            `JCN   : begin  ; end
-            `INA   : begin  ; end
-            `B0010 : begin case(immediate[0])
-                        `FIM  : begin ; end
-                        `SRC  : begin ; end
-                     endcase
-            `B0011 : begin case(immediate[0])
-                        `FIN  : begin ; end
-                        `JIN  : begin ; end
-                     endcase
-            `JUN   : begin data              <= a             ; carry_out <= 1'b0 ; end
-            `JMS   : begin data              <= in            ; carry_out <= 1'b0 ; end
-            `INC   : begin data              <= immediate     ; carry_out <= 1'b0 ; end
-            `ISZ   : begin data              <= b             ; carry_out <= 1'b0 ; end
-            `ADD   : begin data              <= immediate     ; carry_out <= 1'b0 ; end
-            `SUB   : begin data              <= immediate     ; carry_out <= 1'b0 ; end
-            `LD    : begin data              <= immediate     ; carry_out <= 1'b0 ; end
-            `XCH   : begin data              <= immediate     ; carry_out <= 1'b0 ; end
-            `BBL   : begin data              <= immediate     ; carry_out <= 1'b0 ; end
-            `LDM   : begin data              <= immediate     ; carry_out <= 1'b0 ; end
-            `F*    : begin case(immediate)
-                        `CLB  : begin ; end
-                        `CLC  : begin ; end
-                        `IAC  : begin ; end
-                        `CMC  : begin ; end
-                        `RAL  : begin ; end
-                        `RAR  : begin ; end
-                        `TCC  : begin ; end
-                        `DAC  : begin ; end
-                        `TCS  : begin ; end
-                        `STC  : begin ; end
-                        `DAA  : begin ; end
-                        `KBP  : begin ; end
-                        `DCL  : begin ; end
-                     endcase
-            `E*    :  begin case(immediate)
-                        `WRM  : begin ; end
-                        `WMP  : begin ; end
-                        `WRR  : begin ; end
-                        `WPM  : begin ; end
-                        `WR0  : begin ; end
-                        `WR1  : begin ; end
-                        `WR2  : begin ; end
-                        `WR3  : begin ; end
-                        `SBM  : begin ; end
-                        `RDM  : begin ; end
-                        `RDR  : begin ; end
-                        `ADM  : begin ; end
-                        `RD0  : begin ; end
-                        `RD1  : begin ; end
-                        `RD2  : begin ; end
-                        `RD3  : begin ; end
-                     endcase
-                default : begin ; end
-            endcase
-            write_a   <= (command == `ADAI) | (command == `MVAB) | (command == `INA) | (command == `MVAI) ;
-            write_b   <= (command == `ADBI) | (command == `MVBA) | (command == `INB) | (command == `MVBI) ;
-            write_out <= (command == `OUTB) | (command == `OUTI) ;
-            jump      <= (command == `JMPI) | ((carry_in == 1'b0) && (command == `JNCI)) ;
-        end // if (reset == 1'b1)
-    end // always
-endmodule // alu
+    output reg  [3:0] alu_result,   // 演算結果（ACCやTempへ）
+    output reg        carry_out,    // キャリーフラグ
+    output reg        zero_out      // ゼロ判定
+);
+
+    // ALU操作コード定義（簡易版）
+    localparam NOP = 4'h0;
+    localparam ADD = 4'h8;
+    localparam SUB = 4'h9;
+    localparam LDM = 4'hD;
+
+    always @(*) begin
+        // デフォルト値
+        alu_result = 4'h0;
+        carry_out  = 1'b0;
+        zero_out   = 1'b0;
+
+        case (alu_op)
+            NOP: begin
+                alu_result = acc_in;   // 何もせずACCを通す
+                carry_out  = 1'b0;
+            end
+
+            ADD: begin
+                {carry_out, alu_result} = acc_in + opa + carry_in;
+            end
+
+            SUB: begin
+                // SUB: ACC - OPA - carry
+                // キャリーはボローとして扱う
+                {carry_out, alu_result} = {1'b0, acc_in} - opa - carry_in;
+            end
+
+            LDM: begin
+                // LDM: ACCに即値をロード
+                alu_result = opa;
+                carry_out  = carry_in; // キャリーは変化させない
+            end
+
+            default: begin
+                alu_result = 4'h0;
+            end
+        endcase
+
+        // Zeroフラグ設定
+        if (alu_result == 4'h0)
+            zero_out = 1'b1;
+        else
+            zero_out = 1'b0;
+    end
+
+endmodule
