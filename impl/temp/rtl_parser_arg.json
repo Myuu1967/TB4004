@@ -36,6 +36,10 @@
   {
    "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/clock_reset.v",
    "Type" : "verilog"
+  },
+  {
+   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/rom.v",
+   "Type" : "verilog"
   }
  ],
  "IncludePath" : [

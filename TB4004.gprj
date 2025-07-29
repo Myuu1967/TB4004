@@ -12,6 +12,7 @@
         <File path="src/drv7seg.v" type="file.verilog" enable="1"/>
         <File path="src/mux7seg.v" type="file.verilog" enable="1"/>
         <File path="src/registers.v" type="file.verilog" enable="1"/>
+        <File path="src/rom.v" type="file.verilog" enable="1"/>
         <File path="src/stack_pc_4bit.v" type="file.verilog" enable="1"/>
         <File path="src/toggle.v" type="file.verilog" enable="1"/>
         <File path="src/leg4.cst" type="file.cst" enable="1"/>
