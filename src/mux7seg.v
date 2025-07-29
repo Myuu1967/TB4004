@@ -12,8 +12,8 @@ module mux7seg (
 
     reg [2:0] seg_no ;
 
-    clkdiv(.clk(clk), .rst(1'b0), .max(24'd1200), .tc(clk10KHz)) ;
-
+    clkdiv u_clkdiv (.clk(clk), .rst(1'b0), .max(24'd1200), .tc(clk10KHz));
+    
     always @(posedge(clk10KHz)) begin
         seg_no <= ((seg_no + 3'd1) % 8) ;
     end /* alwasy */

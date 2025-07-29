@@ -2,6 +2,10 @@
  "Device" : "GW1N-4B",
  "Files" : [
   {
+   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/acc_temp_regs.v",
+   "Type" : "verilog"
+  },
+  {
    "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/alu.v",
    "Type" : "verilog"
   },
@@ -10,7 +14,23 @@
    "Type" : "verilog"
   },
   {
+   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/clock_reset.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpu_microcycle.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpu_top.v",
+   "Type" : "verilog"
+  },
+  {
    "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/debounce.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/decoder_with_cc.v",
    "Type" : "verilog"
   },
   {
@@ -22,11 +42,7 @@
    "Type" : "verilog"
   },
   {
-   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/toggle.v",
-   "Type" : "verilog"
-  },
-  {
-   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/clock_reset.v",
+   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/register_file.v",
    "Type" : "verilog"
   },
   {
@@ -34,27 +50,15 @@
    "Type" : "verilog"
   },
   {
-   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/acc_temp_regs.v",
-   "Type" : "verilog"
-  },
-  {
-   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/decoder_with_cc.v",
-   "Type" : "verilog"
-  },
-  {
    "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/stack.v",
    "Type" : "verilog"
   },
   {
-   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/register_file.v",
+   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/toggle.v",
    "Type" : "verilog"
   },
   {
-   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpu_top.v",
-   "Type" : "verilog"
-  },
-  {
-   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpu_microcycle.v",
+   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpu_top_with_7seg.v",
    "Type" : "verilog"
   }
  ],
