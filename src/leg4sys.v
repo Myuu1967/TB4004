@@ -24,14 +24,17 @@ parameter MAX1KHZ =    24'd5999 ;
     wire [7:0] rom_out ;
     wire [3:0] out ;
 
-    function clksel ;
-        input [1:0] sw ;
-        case (sw)
-        2'd3: clksel = clk ;
-        2'd2: clksel = clk10hz ;
-        2'd1: clksel = clk1hz ;
-        2'd0: clksel = manual_clk ;
-        endcase
+    function clksel;
+        input [1:0] sw;
+        begin
+            case (sw)
+                2'd3: clksel = clk;
+                2'd2: clksel = clk10hz;
+                2'd1: clksel = clk1hz;
+                2'd0: clksel = manual_clk;
+                default: clksel = manual_clk;  // 念のため
+            endcase
+        end
     endfunction
 
     assign rst = ~nrst ;
