@@ -40,6 +40,10 @@
   {
    "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/rom.v",
    "Type" : "verilog"
+  },
+  {
+   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/acc_temp_regs.v",
+   "Type" : "verilog"
   }
  ],
  "IncludePath" : [

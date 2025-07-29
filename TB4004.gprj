@@ -5,6 +5,7 @@
     <Version>5</Version>
     <Device name="GW1N-4B" pn="GW1N-UV4LQ144C6/I5">gw1n4b-030</Device>
     <FileList>
+        <File path="src/acc_temp_regs.v" type="file.verilog" enable="1"/>
         <File path="src/alu.v" type="file.verilog" enable="1"/>
         <File path="src/clkdiv.v" type="file.verilog" enable="1"/>
         <File path="src/clock_reset.v" type="file.verilog" enable="1"/>
