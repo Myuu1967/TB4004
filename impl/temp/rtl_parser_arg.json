@@ -22,10 +22,6 @@
    "Type" : "verilog"
   },
   {
-   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/registers.v",
-   "Type" : "verilog"
-  },
-  {
    "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/toggle.v",
    "Type" : "verilog"
   },
@@ -47,6 +43,14 @@
   },
   {
    "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/stack.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/register_file.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpu_top.v",
    "Type" : "verilog"
   }
  ],

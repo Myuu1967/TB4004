@@ -1,85 +1,132 @@
-module stack_pc_4bit (
-    input  wire        clk,
-    input  wire        reset,
-    input  wire        push,       // PCをスタックに退避
-    input  wire        pop,        // スタックから復帰
-    input  wire        pc_inc,     // PCをインクリメント
-    input  wire        pc_load,    // PC書き込み
-    input  wire [1:0]  pc_sel,     // 00=low, 01=mid, 10=high
-    input  wire [3:0]  data_in,    // 内部4ビットバス
-    output reg  [3:0]  data_out,   // 内部4ビットバス（読み出し）
-    output reg  [3:0]  pc_low,
-    output reg  [3:0]  pc_mid,
-    output reg  [3:0]  pc_high
+module cpu_top (
+    input  wire clk,         // toggle.v からのクロック
+    input  wire rst_n,       // リセット
+    input  wire test_in,     // TESTピン（CC用）
+
+    // デバッグ用（外部へ出す）
+    output wire [11:0] pc_addr,
+    output wire [3:0]  acc_debug
 );
 
-    // 8段のスタック
-    reg [3:0] stack_low  [0:7];
-    reg [3:0] stack_mid  [0:7];
-    reg [3:0] stack_high [0:7];
+    // ======== 内部配線 ========
 
-    reg [2:0] sp;  // スタックポインタ
+    // cycle(0〜7) と sync
+    wire [2:0] cycle;
+    wire sync;
 
-    integer i;
+    // PC関連
+    wire [3:0] pc_low, pc_mid, pc_high;
 
-    // data_out (選択した段を返す)
-    always @(*) begin
-        case (pc_sel)
-            2'b00: data_out = pc_low;
-            2'b01: data_out = pc_mid;
-            2'b10: data_out = pc_high;
-            default: data_out = 4'h0;
-        endcase
-    end
+    // ROM関連
+    wire [3:0] rom_data;   // 4bit (M1=OPR, M2=OPA)
 
-    always @(posedge clk or posedge reset) begin
-        if (reset) begin
-            pc_low  <= 4'h0;
-            pc_mid  <= 4'h0;
-            pc_high <= 4'h0;
-            sp <= 0;
-            for (i = 0; i < 8; i = i + 1) begin
-                stack_low[i]  <= 4'h0;
-                stack_mid[i]  <= 4'h0;
-                stack_high[i] <= 4'h0;
-            end
-        end else begin
-            // PC書き込み
-            if (pc_load) begin
-                case (pc_sel)
-                    2'b00: pc_low  <= data_in;
-                    2'b01: pc_mid  <= data_in;
-                    2'b10: pc_high <= data_in;
-                endcase
+    // decoder関連
+    wire alu_enable;
+    wire [3:0] alu_op;
+    wire acc_we;
+    wire temp_we;
 
-            // PUSH（退避）
-            end else if (push && sp < 7) begin
-                stack_low[sp]  <= pc_low;
-                stack_mid[sp]  <= pc_mid;
-                stack_high[sp] <= pc_high;
-                sp <= sp + 1;
+    // ACC & Temp
+    wire [3:0] acc_out;
+    wire [3:0] temp_out;
 
-            // POP（復帰）
-            end else if (pop && sp > 0) begin
-                sp <= sp - 1;
-                pc_low  <= stack_low[sp-1];
-                pc_mid  <= stack_mid[sp-1];
-                pc_high <= stack_high[sp-1];
+    // ALU
+    wire [3:0] alu_result;
+    wire       carry_out;
+    wire       zero_out;
 
-            // PCインクリメント
-            end else if (pc_inc) begin
-                if (pc_low == 4'hF) begin
-                    pc_low <= 4'h0;
-                    if (pc_mid == 4'hF) begin
-                        pc_mid <= 4'h0;
-                        pc_high <= pc_high + 1;
-                    end else begin
-                        pc_mid <= pc_mid + 1;
-                    end
-                end else begin
-                    pc_low <= pc_low + 1;
-                end
-            end
-        end
-    end
+    // CC（decoder内）
+    wire carry_flag, zero_flag, cpl_flag, test_flag;
+
+    // Register File
+    wire [3:0] reg_dout;
+
+    // ======== モジュール接続 ========
+
+    // 8サイクル生成
+    clock_reset u_clock_reset (
+        .toggle_clk(clk),
+        .rst_n(rst_n),
+        .cycle(cycle),
+        .sync(sync)
+    );
+
+    // PC
+    pc u_pc (
+        .clk(clk),
+        .rst_n(rst_n),
+        .cycle(cycle),
+        .pc_load(1'b0),        // とりあえず固定（ジャンプ命令は後で）
+        .pc_new(12'h000),
+        .pc_low(pc_low),
+        .pc_mid(pc_mid),
+        .pc_high(pc_high),
+        .pc_addr(pc_addr)
+    );
+
+    // ROM
+    rom u_rom (
+        .addr(pc_addr),
+        .cycle(cycle),
+        .nibble(rom_data)
+    );
+
+    // decoder（CC統合）
+    decoder_with_cc u_decoder (
+        .clk(clk),
+        .rst_n(rst_n),
+        .opr(rom_data),   // 今は簡単のため nibble をそのまま渡す
+        .opa(4'h0),       // 後で M2 を正しく opa に
+        .cycle(cycle),
+        .carry_from_alu(carry_out),
+        .zero_from_alu(zero_out),
+        .test_in(test_in),
+
+        .alu_enable(alu_enable),
+        .alu_op(alu_op),
+        .acc_we(acc_we),
+        .temp_we(temp_we),
+
+        .carry_flag(carry_flag),
+        .zero_flag(zero_flag),
+        .cpl_flag(cpl_flag),
+        .test_flag(test_flag)
+    );
+
+    // ACC & Temp
+    acc_temp_regs u_acc_temp (
+        .clk(clk),
+        .rst_n(rst_n),
+        .alu_result(alu_result),
+        .acc_we(acc_we),
+        .temp_we(temp_we),
+        .acc_out(acc_out),
+        .temp_out(temp_out)
+    );
+
+    // ALU
+    alu u_alu (
+        .alu_op(alu_op),
+        .acc_in(acc_out),
+        .temp_in(temp_out),
+        .opa(4'h0),          // 後でオペランドを繋ぐ
+        .carry_in(carry_flag),
+        .alu_result(alu_result),
+        .carry_out(carry_out),
+        .zero_out(zero_out)
+    );
+
+    // Register File（仮・未接続）
+    register_file u_registers (
+        .clk(clk),
+        .rst_n(rst_n),
+        .reg_we(1'b0),
+        .reg_addr(4'h0),
+        .reg_din(4'h0),
+        .reg_dout(reg_dout)
+    );
+
+    // デバッグ出力
+    assign acc_debug = acc_out;
+
 endmodule
