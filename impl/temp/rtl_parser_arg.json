@@ -26,10 +26,6 @@
    "Type" : "verilog"
   },
   {
-   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/stack_pc_4bit.v",
-   "Type" : "verilog"
-  },
-  {
    "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/toggle.v",
    "Type" : "verilog"
   },
@@ -47,6 +43,10 @@
   },
   {
    "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/decoder_with_cc.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/stack.v",
    "Type" : "verilog"
   }
  ],
