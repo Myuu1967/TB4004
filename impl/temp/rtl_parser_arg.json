@@ -10,14 +10,6 @@
    "Type" : "verilog"
   },
   {
-   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpu_microcycle.v",
-   "Type" : "verilog"
-  },
-  {
-   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpu_top.v",
-   "Type" : "verilog"
-  },
-  {
    "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/debounce.v",
    "Type" : "verilog"
   },
@@ -26,23 +18,7 @@
    "Type" : "verilog"
   },
   {
-   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/leg4.v",
-   "Type" : "verilog"
-  },
-  {
-   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/leg4_rom.v",
-   "Type" : "verilog"
-  },
-  {
-   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/leg4sys.v",
-   "Type" : "verilog"
-  },
-  {
    "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/mux7seg.v",
-   "Type" : "verilog"
-  },
-  {
-   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/pc.v",
    "Type" : "verilog"
   },
   {
@@ -55,6 +31,10 @@
   },
   {
    "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/toggle.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/clock_reset.v",
    "Type" : "verilog"
   }
  ],

@@ -7,15 +7,10 @@
     <FileList>
         <File path="src/alu.v" type="file.verilog" enable="1"/>
         <File path="src/clkdiv.v" type="file.verilog" enable="1"/>
-        <File path="src/cpu_microcycle.v" type="file.verilog" enable="1"/>
-        <File path="src/cpu_top.v" type="file.verilog" enable="1"/>
+        <File path="src/clock_reset.v" type="file.verilog" enable="1"/>
         <File path="src/debounce.v" type="file.verilog" enable="1"/>
         <File path="src/drv7seg.v" type="file.verilog" enable="1"/>
-        <File path="src/leg4.v" type="file.verilog" enable="1"/>
-        <File path="src/leg4_rom.v" type="file.verilog" enable="1"/>
-        <File path="src/leg4sys.v" type="file.verilog" enable="1"/>
         <File path="src/mux7seg.v" type="file.verilog" enable="1"/>
-        <File path="src/pc.v" type="file.verilog" enable="1"/>
         <File path="src/registers.v" type="file.verilog" enable="1"/>
         <File path="src/stack_pc_4bit.v" type="file.verilog" enable="1"/>
         <File path="src/toggle.v" type="file.verilog" enable="1"/>
