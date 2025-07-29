@@ -1,4 +1,4 @@
-module cpu_top (
+module stack_pc_4bit (
     input  wire clk,         // toggle.v からのクロック
     input  wire rst_n,       // リセット
     input  wire test_in,     // TESTピン（CC用）

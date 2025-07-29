@@ -7,6 +7,9 @@ module rom (
     // 4K×8bit ROM
     reg [7:0] rommem [0:4095];
 
+    // integer i をモジュール直下で宣言
+    integer i;
+
     // 初期化（命令直書き）
     initial begin
         // 例: NOP(0x00)、ADD R5(0x85)、SUB R7(0x97) を並べる
@@ -16,7 +19,6 @@ module rom (
         rommem[12'h003] = 8'h00; // NOP
 
         // 使わない領域をNOPで埋める
-        integer i;
         for (i = 4; i < 4096; i = i + 1) begin
             rommem[i] = 8'h00;
         end

@@ -52,6 +52,10 @@
   {
    "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpu_top.v",
    "Type" : "verilog"
+  },
+  {
+   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpu_microcycle.v",
+   "Type" : "verilog"
   }
  ],
  "IncludePath" : [
