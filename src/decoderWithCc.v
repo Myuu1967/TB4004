@@ -1,4 +1,4 @@
-module decoder_with_cc (
+module decoderWithCc (
     input  wire       clk,
     input  wire       rst_n,
     input  wire [3:0] opr,       // 命令コード (ROM上位4bit)
@@ -85,4 +85,4 @@ module decoder_with_cc (
         end
     end
 
-endmodule
+endmodule   // decoderWithCc

@@ -1,4 +1,4 @@
-module clock_reset (
+module clockReset (
     input  wire toggle_clk, // toggle.v からのクロック
     input  wire rst_n,      // 非同期リセット（Lowでリセット）
     output reg  [2:0] cycle, // 8サイクル (0〜7: A1〜X3)
@@ -22,4 +22,4 @@ module clock_reset (
         sync = (cycle == 3'd7);
     end
 
-endmodule
+endmodule   // clockReset

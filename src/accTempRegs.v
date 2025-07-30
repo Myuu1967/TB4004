@@ -1,4 +1,4 @@
-module acc_temp_regs (
+module accTempRegs (
     input  wire       clk,
     input  wire       rst_n,
 

@@ -1,4 +1,4 @@
-module cpu_microcycle (
+module cpuMicrocycle (
     input  wire clk,
     input  wire rst,
     output reg [2:0] cycle,       // 0〜7を繰り返すカウンタ
@@ -21,4 +21,4 @@ module cpu_microcycle (
     assign read_phase  = (cycle >= 3'd3 && cycle <= 3'd4); // T3-T4
     assign exec_phase  = (cycle >= 3'd5);                // T5-T7
 
-endmodule
+endmodule   // cpuMicrocycle

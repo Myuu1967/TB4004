@@ -1,4 +1,4 @@
-module cpu_top (
+module cpuTop (
     input  wire clk,         // toggle.v からのクロック
     input  wire rst_n,       // リセット
     input  wire test_in,     // TESTピン（CC用）
@@ -129,4 +129,4 @@ module cpu_top (
     // デバッグ出力
     assign acc_debug = acc_out;
 
-endmodule
+endmodule   // cpuTop
