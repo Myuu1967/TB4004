@@ -44,7 +44,7 @@ module cpuTop (
     // ======== モジュール接続 ========
 
     // 8サイクル生成
-    clock_reset u_clock_reset (
+    clockReset u_clock_reset (
         .toggle_clk(clk),
         .rst_n(rst_n),
         .cycle(cycle),
@@ -72,7 +72,7 @@ module cpuTop (
     );
 
     // decoder（CC統合）
-    decoder_with_cc u_decoder (
+    decoderWithCc u_decoder (
         .clk(clk),
         .rst_n(rst_n),
         .opr(rom_data),   // 今は簡単のため nibble をそのまま渡す
@@ -94,7 +94,7 @@ module cpuTop (
     );
 
     // ACC & Temp
-    acc_temp_regs u_acc_temp (
+    accTempRegs u_acc_temp (
         .clk(clk),
         .rst_n(rst_n),
         .alu_result(alu_result),
@@ -117,7 +117,7 @@ module cpuTop (
     );
 
     // Register File（仮・未接続）
-    register_file u_registers (
+    registerFile u_registers (
         .clk(clk),
         .rst_n(rst_n),
         .reg_we(1'b0),

@@ -14,14 +14,14 @@ module cpuTopWith7seg (
     wire clk1Hz;
     wire clk10Hz;
 
-    clkDiv u_div1Hz (
+    clkdiv u_div1Hz (
         .clk(clk),
         .rst(~nrst),
         .max(24'd50_000_000),    // 基板クロック50MHz想定
         .tc(clk1Hz)
     );
 
-    clkDiv u_div10Hz (
+    clkdiv u_div10Hz (
         .clk(clk),
         .rst(~nrst),
         .max(24'd5_000_000),
@@ -91,4 +91,4 @@ module cpuTopWith7seg (
         .seg_dig(segDig)
     );
 
-endmodule
+endmodule   // cpuTopWith7seg

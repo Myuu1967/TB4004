@@ -21,6 +21,6 @@
         <File path="src/rom.v" type="file.verilog" enable="1"/>
         <File path="src/stack.v" type="file.verilog" enable="1"/>
         <File path="src/toggle.v" type="file.verilog" enable="1"/>
-        <File path="src/leg4.cst" type="file.cst" enable="1"/>
+        <File path="src/TB4004.cst" type="file.cst" enable="1"/>
     </FileList>
 </Project>
