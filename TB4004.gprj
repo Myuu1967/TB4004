@@ -9,9 +9,9 @@
         <File path="src/alu.v" type="file.verilog" enable="1"/>
         <File path="src/clkdiv.v" type="file.verilog" enable="1"/>
         <File path="src/clock_reset.v" type="file.verilog" enable="1"/>
+        <File path="src/cpuTopWith7seg.v" type="file.verilog" enable="1"/>
         <File path="src/cpu_microcycle.v" type="file.verilog" enable="1"/>
         <File path="src/cpu_top.v" type="file.verilog" enable="1"/>
-        <File path="src/cpu_top_with_7seg.v" type="file.verilog" enable="1"/>
         <File path="src/debounce.v" type="file.verilog" enable="1"/>
         <File path="src/decoder_with_cc.v" type="file.verilog" enable="1"/>
         <File path="src/drv7seg.v" type="file.verilog" enable="1"/>

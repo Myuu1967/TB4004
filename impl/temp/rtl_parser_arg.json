@@ -58,7 +58,7 @@
    "Type" : "verilog"
   },
   {
-   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpu_top_with_7seg.v",
+   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
    "Type" : "verilog"
   }
  ],
