@@ -6,18 +6,20 @@
     <FileList>
         <File path="F:\@Tanuki_Bayashin\FPGA\TB4004\src\alu.v" type="verilog"/>
         <File path="F:\@Tanuki_Bayashin\FPGA\TB4004\src\clkdiv.v" type="verilog"/>
+        <File path="F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v" type="verilog"/>
         <File path="F:\@Tanuki_Bayashin\FPGA\TB4004\src\debounce.v" type="verilog"/>
         <File path="F:\@Tanuki_Bayashin\FPGA\TB4004\src\drv7seg.v" type="verilog"/>
         <File path="F:\@Tanuki_Bayashin\FPGA\TB4004\src\mux7seg.v" type="verilog"/>
-        <File path="F:\@Tanuki_Bayashin\FPGA\TB4004\src\toggle.v" type="verilog"/>
-        <File path="F:\@Tanuki_Bayashin\FPGA\TB4004\src\clock_reset.v" type="verilog"/>
         <File path="F:\@Tanuki_Bayashin\FPGA\TB4004\src\rom.v" type="verilog"/>
-        <File path="F:\@Tanuki_Bayashin\FPGA\TB4004\src\acc_temp_regs.v" type="verilog"/>
-        <File path="F:\@Tanuki_Bayashin\FPGA\TB4004\src\decoder_with_cc.v" type="verilog"/>
         <File path="F:\@Tanuki_Bayashin\FPGA\TB4004\src\stack.v" type="verilog"/>
-        <File path="F:\@Tanuki_Bayashin\FPGA\TB4004\src\register_file.v" type="verilog"/>
-        <File path="F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpu_top.v" type="verilog"/>
-        <File path="F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpu_microcycle.v" type="verilog"/>
+        <File path="F:\@Tanuki_Bayashin\FPGA\TB4004\src\toggle.v" type="verilog"/>
+        <File path="F:\@Tanuki_Bayashin\FPGA\TB4004\src\accTempRegs.v" type="verilog"/>
+        <File path="F:\@Tanuki_Bayashin\FPGA\TB4004\src\clockReset.v" type="verilog"/>
+        <File path="F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuMicrocycle.v" type="verilog"/>
+        <File path="F:\@Tanuki_Bayashin\FPGA\TB4004\src\decoderWithCc.v" type="verilog"/>
+        <File path="F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v" type="verilog"/>
+        <File path="F:\@Tanuki_Bayashin\FPGA\TB4004\src\pc.v" type="verilog"/>
+        <File path="F:\@Tanuki_Bayashin\FPGA\TB4004\src\registerFile.v" type="verilog"/>
     </FileList>
     <OptionList>
         <Option type="disable_insert_pad" value="0"/>

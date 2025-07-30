@@ -14,17 +14,21 @@ module cpuTopWith7seg (
     wire clk1Hz;
     wire clk10Hz;
 
+    parameter MAX1HZ  = 24'd5999999 ;
+    parameter MAX10HZ =  24'd599999 ;
+    parameter MAX1KHZ =    24'd5999 ;
+
     clkdiv u_div1Hz (
         .clk(clk),
         .rst(~nrst),
-        .max(24'd50_000_000),    // 基板クロック50MHz想定
+        .max(MAX1HZ),    // 基板クロック50MHz想定
         .tc(clk1Hz)
     );
 
     clkdiv u_div10Hz (
         .clk(clk),
         .rst(~nrst),
-        .max(24'd5_000_000),
+        .max(MAX10HZ),
         .tc(clk10Hz)
     );
 
