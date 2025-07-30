@@ -1,16 +1,16 @@
 module stack (
     input  wire        clk,
-    input  wire        rst_n,
+    input  wire        rstN,
 
     // PUSH/POP制御
     input  wire        push,          // CALL命令など
     input  wire        pop,           // RET命令など
 
     // 書き込みデータ（PUSH時）
-    input  wire [11:0] pc_in,
+    input  wire [11:0] pcIn,
 
     // 読み出しデータ（POP時）
-    output reg  [11:0] pc_out,
+    output reg  [11:0] pcOut,
 
     // SP（スタックポインタ）
     output reg  [2:0] sp,
@@ -21,10 +21,10 @@ module stack (
 );
 
     // 8段の12bitスタック
-    reg [11:0] stack_mem [0:7];
+    reg [11:0] stackMem [0:7];
 
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
+    always @(posedge clk or negedge rstN) begin
+        if (!rstN) begin
             sp        <= 3'd0;
             overflow  <= 1'b0;
             underflow <= 1'b0;
@@ -35,7 +35,7 @@ module stack (
                     overflow <= 1'b1; // 8段を超えた
                 end else begin
                     sp <= sp + 3'd1;
-                    stack_mem[sp + 3'd1] <= pc_in;
+                    stackMem[sp + 3'd1] <= pcIn;
                 end
             end
 
@@ -43,13 +43,13 @@ module stack (
             if (pop) begin
                 if (sp == 3'd0) begin
                     underflow <= 1'b1; // 空の状態でPOP
-                    pc_out <= 12'h000;
+                    pcOut <= 12'h000;
                 end else begin
-                    pc_out <= stack_mem[sp];
+                    pcOut <= stackMem[sp];
                     sp <= sp - 3'd1;
                 end
             end
         end
     end
 
-endmodule
+endmodule  // stack

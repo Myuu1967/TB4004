@@ -1,2 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Module name="register_file" Register="64" Lut="51"/>
+<Module name="cpuTopWith7seg" Register="1" Lut="17">
+    <SubModule name="uDiv1Hz" Register="23" Lut="51"/>
+    <SubModule name="uDiv10Hz" Register="20" Lut="35"/>
+    <SubModule name="uDebounce" Register="4" Lut="1">
+        <SubModule name="clkDivInst" Register="15" Lut="29"/>
+    </SubModule>
+    <SubModule name="uCpu">
+        <SubModule name="uClockReset" Register="3" Lut="3"/>
+        <SubModule name="uPc" Register="12" Alu="11" Lut="2"/>
+    </SubModule>
+    <SubModule name="uDrvA" Lut="1"/>
+    <SubModule name="uDrvB" Lut="1"/>
+    <SubModule name="uMux" Register="3" Lut="55">
+        <SubModule name="uClkDiv" Register="24" Alu="23" Lut="8"/>
+    </SubModule>
+</Module>

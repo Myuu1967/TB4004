@@ -1,14 +1,14 @@
-module register_file (
+module registerFile (
     input  wire        clk,
-    input  wire        rst_n,
+    input  wire        rstN,
 
     // 書き込み制御
-    input  wire        reg_we,       // 書き込みイネーブル
-    input  wire [3:0]  reg_addr,     // 書き込み/読み出しアドレス (0〜15)
-    input  wire [3:0]  reg_din,      // 書き込みデータ
+    input  wire        regWe,       // 書き込みイネーブル
+    input  wire [3:0]  regAddr,     // 書き込み/読み出しアドレス (0〜15)
+    input  wire [3:0]  regDin,      // 書き込みデータ
 
     // 読み出し
-    output wire [3:0]  reg_dout      // 読み出しデータ
+    output wire [3:0]  regDout      // 読み出しデータ
 );
 
     // 16本の4bitレジスタ
@@ -16,19 +16,19 @@ module register_file (
     integer i;
 
     // リセット時は全部0に
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
+    always @(posedge clk or negedge rstN) begin
+        if (!rstN) begin
             for (i = 0; i < 16; i = i + 1) begin
                 regs[i] <= 4'd0;
             end
         end else begin
-            if (reg_we) begin
-                regs[reg_addr] <= reg_din;
+            if (regWe) begin
+                regs[regAddr] <= regDin;
             end
         end
     end
 
     // 常時読み出し（コンビネーション）
-    assign reg_dout = regs[reg_addr];
+    assign regDout = regs[regAddr];
 
-endmodule
+endmodule  // registerFile

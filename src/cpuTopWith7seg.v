@@ -2,7 +2,7 @@ module cpuTopWith7seg (
     input  wire clk,           // FPGA基板クロック
     input  wire clkBtn,        // 手動クロックボタン
     input  wire [1:0] clkSel,  // クロック切替スイッチ
-    input  wire nrst,          // リセット（負論理）
+    input  wire nRst,          // リセット（負論理）
     input  wire testIn,        // TESTピン（in[0]など割り当て可）
 
     // 7セグLED出力
@@ -14,21 +14,21 @@ module cpuTopWith7seg (
     wire clk1Hz;
     wire clk10Hz;
 
-    parameter MAX1HZ  = 24'd5999999 ;
-    parameter MAX10HZ =  24'd599999 ;
-    parameter MAX1KHZ =    24'd5999 ;
+    parameter MAX1HZ  = 24'd5999999;
+    parameter MAX10HZ = 24'd599999;
+    parameter MAX1KHZ = 24'd5999;
 
-    clkdiv u_div1Hz (
+    clkDiv uDiv1Hz (
         .clk(clk),
-        .rst(~nrst),
-        .max(MAX1HZ),    // 基板クロック50MHz想定
+        .rst(~nRst),
+        .maxCount(MAX1HZ),    // 基板クロック50MHz想定
         .tc(clk1Hz)
     );
 
-    clkdiv u_div10Hz (
+    clkDiv uDiv10Hz (
         .clk(clk),
-        .rst(~nrst),
-        .max(MAX10HZ),
+        .rst(~nRst),
+        .maxCount(MAX10HZ),
         .tc(clk10Hz)
     );
 
@@ -38,16 +38,16 @@ module cpuTopWith7seg (
     wire stepClk;
 
     // ボタンのチャタリング除去
-    debounce u_debounce (
+    debounce uDebounce (
         .clk(clk),
-        .rst(~nrst),
+        .rst(~nRst),
         .in(clkBtn),
         .out(clkBtnDebounced)
     );
 
     // 立下りエッジ検出 → 1クロックだけ High
-    always @(posedge clk or negedge nrst) begin
-        if (!nrst)
+    always @(posedge clk or negedge nRst) begin
+        if (!nRst)
             prevBtn <= 1'b1;
         else
             prevBtn <= clkBtnDebounced;
@@ -69,30 +69,30 @@ module cpuTopWith7seg (
     wire [11:0] pcAddr;
     wire [3:0]  accDebug;
 
-    cpuTop u_cpu (
+    cpuTop uCpu (
         .clk(cpuClk),
-        .rst_n(nrst),
-        .test_in(testIn),
-        .pc_addr(pcAddr),
-        .acc_debug(accDebug)
+        .rstN(nRst),
+        .testIn(testIn),
+        .pcAddr(pcAddr),
+        .accDebug(accDebug)
     );
 
     // ========= 7セグ変換 =========
     wire [7:0] segA, segB, segC, segD;
 
-    drv7seg u_drvA (.in(pcAddr[11:8]), .dp(1'b0), .seg(segA));
-    drv7seg u_drvB (.in(pcAddr[7:4]),  .dp(1'b0), .seg(segB));
-    drv7seg u_drvC (.in(pcAddr[3:0]),  .dp(1'b0), .seg(segC));
-    drv7seg u_drvD (.in(accDebug),     .dp(1'b0), .seg(segD));
+    drv7seg uDrvA (.in(pcAddr[11:8]), .dp(1'b0), .seg(segA));
+    drv7seg uDrvB (.in(pcAddr[7:4]),  .dp(1'b0), .seg(segB));
+    drv7seg uDrvC (.in(pcAddr[3:0]),  .dp(1'b0), .seg(segC));
+    drv7seg uDrvD (.in(accDebug),     .dp(1'b0), .seg(segD));
 
-    mux7seg u_mux (
+    mux7seg uMux (
         .clk(clk),          // 7セグは速いクロックで切替
-        .seg_a(segA),
-        .seg_b(segB),
-        .seg_c(segC),
-        .seg_d(segD),
+        .segA(segA),
+        .segB(segB),
+        .segC(segC),
+        .segD(segD),
         .seg(seg),
-        .seg_dig(segDig)
+        .segDig(segDig)
     );
 
-endmodule   // cpuTopWith7seg
+endmodule  // cpuTopWith7seg

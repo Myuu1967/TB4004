@@ -1,16 +1,16 @@
 // alu.v
 // ALU for LEG4
+
 `define NOP     4'b0000
 `define JCN     4'b0001         //  2Byte Command
 
-
 `define B0010   4'b0010
-`define FIM     1'b0            //  2Byte Command   //
-`define SRC     1'b1            //
+`define FIM     1'b0            //  2Byte Command   
+`define SRC     1'b1            
 
 `define B0011   4'b0011
-`define FIN     1'b0            //
-`define JIN     1'b1            //
+`define FIN     1'b0            
+`define JIN     1'b1            
 
 `define JUN     4'b0100         //  2Byte Command
 `define JMS     4'b0101         //  2Byte Command
@@ -29,7 +29,6 @@
 `define CLC     4'b0001
 `define IAC     4'b0010
 `define CMC     4'b0011
-//`define UNDEFINE1 4'b0100
 `define RAL     4'b0101
 `define RAR     4'b0110
 `define TCC     4'b0111
@@ -39,9 +38,6 @@
 `define DAA     4'b1011
 `define KBP     4'b1100
 `define DCL     4'b1101
-//`define UNDEFINE2     4'b110
-//`define UNDEFINE3     4'b1111
-
 
 `define E*      4'b1110
 
@@ -63,15 +59,15 @@
 `define RD3     4'b1111
 
 module alu (
-    input  wire [3:0] alu_op,       // decoder からの ALU操作コード
-    input  wire [3:0] acc_in,       // ACCの値
-    input  wire [3:0] temp_in,      // Tempの値
-    input  wire [3:0] opa,          // オペランド（ROM下位4bit、またはレジスタ値）
-    input  wire       carry_in,     // CCのCarryフラグ（ADD, SUB用）
+    input  wire [3:0] aluOp,       // decoder からの ALU操作コード
+    input  wire [3:0] accIn,       // ACCの値
+    input  wire [3:0] tempIn,      // Tempの値
+    input  wire [3:0] opa,         // オペランド（ROM下位4bit、またはレジスタ値）
+    input  wire       carryIn,     // CCのCarryフラグ（ADD, SUB用）
 
-    output reg  [3:0] alu_result,   // 演算結果（ACCやTempへ）
-    output reg        carry_out,    // キャリーフラグ
-    output reg        zero_out      // ゼロ判定
+    output reg  [3:0] aluResult,   // 演算結果（ACCやTempへ）
+    output reg        carryOut,    // キャリーフラグ
+    output reg        zeroOut      // ゼロ判定
 );
 
     // ALU操作コード定義（簡易版）
@@ -82,42 +78,42 @@ module alu (
 
     always @(*) begin
         // デフォルト値
-        alu_result = 4'h0;
-        carry_out  = 1'b0;
-        zero_out   = 1'b0;
+        aluResult = 4'h0;
+        carryOut  = 1'b0;
+        zeroOut   = 1'b0;
 
-        case (alu_op)
+        case (aluOp)
             NOP: begin
-                alu_result = acc_in;   // 何もせずACCを通す
-                carry_out  = 1'b0;
+                aluResult = accIn;   // 何もせずACCを通す
+                carryOut  = 1'b0;
             end
 
             ADD: begin
-                {carry_out, alu_result} = acc_in + opa + carry_in;
+                {carryOut, aluResult} = accIn + opa + carryIn;
             end
 
             SUB: begin
                 // SUB: ACC - OPA - carry
                 // キャリーはボローとして扱う
-                {carry_out, alu_result} = {1'b0, acc_in} - opa - carry_in;
+                {carryOut, aluResult} = {1'b0, accIn} - opa - carryIn;
             end
 
             LDM: begin
                 // LDM: ACCに即値をロード
-                alu_result = opa;
-                carry_out  = carry_in; // キャリーは変化させない
+                aluResult = opa;
+                carryOut  = carryIn; // キャリーは変化させない
             end
 
             default: begin
-                alu_result = 4'h0;
+                aluResult = 4'h0;
             end
         endcase
 
         // Zeroフラグ設定
-        if (alu_result == 4'h0)
-            zero_out = 1'b1;
+        if (aluResult == 4'h0)
+            zeroOut = 1'b1;
         else
-            zero_out = 1'b0;
+            zeroOut = 1'b0;
     end
 
 endmodule

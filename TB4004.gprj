@@ -7,7 +7,7 @@
     <FileList>
         <File path="src/accTempRegs.v" type="file.verilog" enable="1"/>
         <File path="src/alu.v" type="file.verilog" enable="1"/>
-        <File path="src/clkdiv.v" type="file.verilog" enable="1"/>
+        <File path="src/clkDiv.v" type="file.verilog" enable="1"/>
         <File path="src/clockReset.v" type="file.verilog" enable="1"/>
         <File path="src/cpuMicrocycle.v" type="file.verilog" enable="1"/>
         <File path="src/cpuTop.v" type="file.verilog" enable="1"/>

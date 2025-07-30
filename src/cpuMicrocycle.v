@@ -1,10 +1,11 @@
 module cpuMicrocycle (
     input  wire clk,
     input  wire rst,
-    output reg [2:0] cycle,       // 0〜7を繰り返すカウンタ
-    output wire fetch_phase,      // T0〜T2
-    output wire read_phase,       // T3〜T4
-    output wire exec_phase        // T5〜T7
+
+    output reg  [2:0] cycle,       // 0〜7を繰り返すカウンタ
+    output wire fetchPhase,        // T0〜T2
+    output wire readPhase,         // T3〜T4
+    output wire execPhase          // T5〜T7
 );
 
     // 8サイクル管理カウンタ
@@ -17,8 +18,8 @@ module cpuMicrocycle (
     end
 
     // フェーズ判定信号
-    assign fetch_phase = (cycle <= 3'd2);                // T0-T2
-    assign read_phase  = (cycle >= 3'd3 && cycle <= 3'd4); // T3-T4
-    assign exec_phase  = (cycle >= 3'd5);                // T5-T7
+    assign fetchPhase = (cycle <= 3'd2);                  // T0-T2
+    assign readPhase  = (cycle >= 3'd3 && cycle <= 3'd4); // T3-T4
+    assign execPhase  = (cycle >= 3'd5);                  // T5-T7
 
-endmodule   // cpuMicrocycle
+endmodule  // cpuMicrocycle

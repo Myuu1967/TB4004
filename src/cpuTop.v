@@ -1,11 +1,11 @@
 module cpuTop (
     input  wire clk,         // toggle.v からのクロック
-    input  wire rst_n,       // リセット
-    input  wire test_in,     // TESTピン（CC用）
+    input  wire rstN,        // リセット
+    input  wire testIn,      // TESTピン（CC用）
 
     // デバッグ用（外部へ出す）
-    output wire [11:0] pc_addr,
-    output wire [3:0]  acc_debug
+    output wire [11:0] pcAddr,
+    output wire [3:0]  accDebug
 );
 
     // ======== 内部配線 ========
@@ -15,118 +15,118 @@ module cpuTop (
     wire sync;
 
     // PC関連
-    wire [3:0] pc_low, pc_mid, pc_high;
+    wire [3:0] pcLow, pcMid, pcHigh;
 
     // ROM関連
-    wire [3:0] rom_data;   // 4bit (M1=OPR, M2=OPA)
+    wire [3:0] romData;   // 4bit (M1=OPR, M2=OPA)
 
     // decoder関連
-    wire alu_enable;
-    wire [3:0] alu_op;
-    wire acc_we;
-    wire temp_we;
+    wire aluEnable;
+    wire [3:0] aluOp;
+    wire accWe;
+    wire tempWe;
 
     // ACC & Temp
-    wire [3:0] acc_out;
-    wire [3:0] temp_out;
+    wire [3:0] accOut;
+    wire [3:0] tempOut;
 
     // ALU
-    wire [3:0] alu_result;
-    wire       carry_out;
-    wire       zero_out;
+    wire [3:0] aluResult;
+    wire       carryOut;
+    wire       zeroOut;
 
     // CC（decoder内）
-    wire carry_flag, zero_flag, cpl_flag, test_flag;
+    wire carryFlag, zeroFlag, cplFlag, testFlag;
 
     // Register File
-    wire [3:0] reg_dout;
+    wire [3:0] regDout;
 
     // ======== モジュール接続 ========
 
     // 8サイクル生成
-    clockReset u_clock_reset (
-        .toggle_clk(clk),
-        .rst_n(rst_n),
+    clockReset uClockReset (
+        .toggleClk(clk),
+        .rstN(rstN),
         .cycle(cycle),
         .sync(sync)
     );
 
     // PC
-    pc u_pc (
+    pc uPc (
         .clk(clk),
-        .rst_n(rst_n),
+        .rstN(rstN),
         .cycle(cycle),
-        .pc_load(1'b0),        // とりあえず固定（ジャンプ命令は後で）
-        .pc_new(12'h000),
-        .pc_low(pc_low),
-        .pc_mid(pc_mid),
-        .pc_high(pc_high),
-        .pc_addr(pc_addr)
+        .pcLoad(1'b0),        // とりあえず固定（ジャンプ命令は後で）
+        .pcNew(12'h000),
+        .pcLow(pcLow),
+        .pcMid(pcMid),
+        .pcHigh(pcHigh),
+        .pcAddr(pcAddr)
     );
 
     // ROM
-    rom u_rom (
-        .addr(pc_addr),
+    rom uRom (
+        .addr(pcAddr),
         .cycle(cycle),
-        .nibble(rom_data)
+        .nibble(romData)
     );
 
     // decoder（CC統合）
-    decoderWithCc u_decoder (
+    decoderWithCc uDecoder (
         .clk(clk),
-        .rst_n(rst_n),
-        .opr(rom_data),   // 今は簡単のため nibble をそのまま渡す
+        .rstN(rstN),
+        .opr(romData),    // 今は簡単のため nibble をそのまま渡す
         .opa(4'h0),       // 後で M2 を正しく opa に
         .cycle(cycle),
-        .carry_from_alu(carry_out),
-        .zero_from_alu(zero_out),
-        .test_in(test_in),
+        .carryFromAlu(carryOut),
+        .zeroFromAlu(zeroOut),
+        .testIn(testIn),
 
-        .alu_enable(alu_enable),
-        .alu_op(alu_op),
-        .acc_we(acc_we),
-        .temp_we(temp_we),
+        .aluEnable(aluEnable),
+        .aluOp(aluOp),
+        .accWe(accWe),
+        .tempWe(tempWe),
 
-        .carry_flag(carry_flag),
-        .zero_flag(zero_flag),
-        .cpl_flag(cpl_flag),
-        .test_flag(test_flag)
+        .carryFlag(carryFlag),
+        .zeroFlag(zeroFlag),
+        .cplFlag(cplFlag),
+        .testFlag(testFlag)
     );
 
     // ACC & Temp
-    accTempRegs u_acc_temp (
+    accTempRegs uAccTemp (
         .clk(clk),
-        .rst_n(rst_n),
-        .alu_result(alu_result),
-        .acc_we(acc_we),
-        .temp_we(temp_we),
-        .acc_out(acc_out),
-        .temp_out(temp_out)
+        .rstN(rstN),
+        .aluResult(aluResult),
+        .accWe(accWe),
+        .tempWe(tempWe),
+        .accOut(accOut),
+        .tempOut(tempOut)
     );
 
     // ALU
-    alu u_alu (
-        .alu_op(alu_op),
-        .acc_in(acc_out),
-        .temp_in(temp_out),
-        .opa(4'h0),          // 後でオペランドを繋ぐ
-        .carry_in(carry_flag),
-        .alu_result(alu_result),
-        .carry_out(carry_out),
-        .zero_out(zero_out)
+    alu uAlu (
+        .aluOp(aluOp),
+        .accIn(accOut),
+        .tempIn(tempOut),
+        .opa(4'h0),           // 後でオペランドを繋ぐ
+        .carryIn(carryFlag),
+        .aluResult(aluResult),
+        .carryOut(carryOut),
+        .zeroOut(zeroOut)
     );
 
     // Register File（仮・未接続）
-    registerFile u_registers (
+    registerFile uRegisters (
         .clk(clk),
-        .rst_n(rst_n),
-        .reg_we(1'b0),
-        .reg_addr(4'h0),
-        .reg_din(4'h0),
-        .reg_dout(reg_dout)
+        .rstN(rstN),
+        .regWe(1'b0),
+        .regAddr(4'h0),
+        .regDin(4'h0),
+        .regDout(regDout)
     );
 
     // デバッグ出力
-    assign acc_debug = acc_out;
+    assign accDebug = accOut;
 
-endmodule   // cpuTop
+endmodule  // cpuTop

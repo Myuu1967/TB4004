@@ -1,27 +1,27 @@
 module accTempRegs (
     input  wire       clk,
-    input  wire       rst_n,
+    input  wire       rstN,        // ← rst_n → rstN に変更
 
     // ALUからの4bit結果
-    input  wire [3:0] alu_result,
+    input  wire [3:0] aluResult,   // ← alu_result → aluResult
 
     // 書き込み制御
-    input  wire       acc_we,     // ACC書き込み
-    input  wire       temp_we,    // Temp書き込み
+    input  wire       accWe,       // ← acc_we → accWe
+    input  wire       tempWe,      // ← temp_we → tempWe
 
     // 出力
-    output reg  [3:0] acc_out,
-    output reg  [3:0] temp_out
+    output reg  [3:0] accOut,      // ← acc_out → accOut
+    output reg  [3:0] tempOut      // ← temp_out → tempOut
 );
 
     // ACCとTempの4bitレジスタ
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            acc_out  <= 4'd0;
-            temp_out <= 4'd0;
+    always @(posedge clk or negedge rstN) begin
+        if (!rstN) begin
+            accOut  <= 4'd0;
+            tempOut <= 4'd0;
         end else begin
-            if (acc_we)  acc_out  <= alu_result;
-            if (temp_we) temp_out <= alu_result;
+            if (accWe)  accOut  <= aluResult;
+            if (tempWe) tempOut <= aluResult;
         end
     end
 
