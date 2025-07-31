@@ -17,23 +17,39 @@
   "SubInsts" : [
    {
     "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
-    "InstLine" : 21,
-    "InstName" : "uDiv1Hz",
+    "InstLine" : 23,
+    "InstName" : "u_clkDiv1Hz",
     "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/clkDiv.v",
     "ModuleLine" : 1,
     "ModuleName" : "clkDiv"
    },
    {
     "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
-    "InstLine" : 28,
-    "InstName" : "uDiv10Hz",
+    "InstLine" : 30,
+    "InstName" : "u_clkDiv10Hz",
     "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/clkDiv.v",
     "ModuleLine" : 1,
     "ModuleName" : "clkDiv"
    },
    {
     "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
-    "InstLine" : 41,
+    "InstLine" : 38,
+    "InstName" : "u_toggle1Hz",
+    "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/toggle.v",
+    "ModuleLine" : 1,
+    "ModuleName" : "toggle"
+   },
+   {
+    "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
+    "InstLine" : 45,
+    "InstName" : "u_toggle10Hz",
+    "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/toggle.v",
+    "ModuleLine" : 1,
+    "ModuleName" : "toggle"
+   },
+   {
+    "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
+    "InstLine" : 69,
     "InstName" : "uDebounce",
     "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/debounce.v",
     "ModuleLine" : 1,
@@ -51,7 +67,7 @@
    },
    {
     "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
-    "InstLine" : 72,
+    "InstLine" : 100,
     "InstName" : "uCpu",
     "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTop.v",
     "ModuleLine" : 1,
@@ -117,7 +133,7 @@
    },
    {
     "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
-    "InstLine" : 83,
+    "InstLine" : 111,
     "InstName" : "uDrvA",
     "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/drv7seg.v",
     "ModuleLine" : 1,
@@ -125,7 +141,7 @@
    },
    {
     "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
-    "InstLine" : 84,
+    "InstLine" : 112,
     "InstName" : "uDrvB",
     "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/drv7seg.v",
     "ModuleLine" : 1,
@@ -133,7 +149,7 @@
    },
    {
     "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
-    "InstLine" : 85,
+    "InstLine" : 113,
     "InstName" : "uDrvC",
     "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/drv7seg.v",
     "ModuleLine" : 1,
@@ -141,7 +157,7 @@
    },
    {
     "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
-    "InstLine" : 86,
+    "InstLine" : 114,
     "InstName" : "uDrvD",
     "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/drv7seg.v",
     "ModuleLine" : 1,
@@ -149,7 +165,7 @@
    },
    {
     "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
-    "InstLine" : 88,
+    "InstLine" : 116,
     "InstName" : "uMux",
     "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/mux7seg.v",
     "ModuleLine" : 1,
@@ -174,13 +190,5 @@
   "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/stack.v",
   "ModuleLine" : 1,
   "ModuleName" : "stack"
- },
- {
-  "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/toggle.v",
-  "InstLine" : 1,
-  "InstName" : "toggle",
-  "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/toggle.v",
-  "ModuleLine" : 1,
-  "ModuleName" : "toggle"
  }
 ]

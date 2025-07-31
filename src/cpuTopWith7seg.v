@@ -10,27 +10,55 @@ module cpuTopWith7seg (
     output wire [3:0] segDig
 );
 
+// cpuTopWith7seg.v 抜粋
+
     // ========= 分周クロック =========
-    wire clk1Hz;
-    wire clk10Hz;
+    wire pulse1Hz, pulse10Hz;
+    wire clk1Hz, clk10Hz;   // ← toggle後の矩形波
 
     parameter MAX1HZ  = 24'd5999999;
     parameter MAX10HZ = 24'd599999;
     parameter MAX1KHZ = 24'd5999;
 
-    clkDiv uDiv1Hz (
+    clkDiv u_clkDiv1Hz (        // ← キャメル記法に変更
         .clk(clk),
         .rst(~nRst),
-        .maxCount(MAX1HZ),    // 基板クロック50MHz想定
-        .tc(clk1Hz)
+        .maxCount(MAX1HZ),
+        .tc(pulse1Hz)
     );
 
-    clkDiv uDiv10Hz (
+    clkDiv u_clkDiv10Hz (
         .clk(clk),
         .rst(~nRst),
         .maxCount(MAX10HZ),
-        .tc(clk10Hz)
+        .tc(pulse10Hz)
     );
+
+    // ========= toggleを挟んで矩形波化 =========
+    toggle u_toggle1Hz (
+        .clk(clk),
+        .rst(~nRst),
+        .in(pulse1Hz),
+        .out(clk1Hz)
+    );
+
+    toggle u_toggle10Hz (
+        .clk(clk),
+        .rst(~nRst),
+        .in(pulse10Hz),
+        .out(clk10Hz)
+    );
+
+    // ========= クロック切替 =========
+    reg cpuClk;
+    always @(*) begin
+        case (clkSel)
+            2'b00: cpuClk = stepClk;  // 手動クロック
+            2'b01: cpuClk = clk1Hz;   // toggle後の矩形波
+            2'b10: cpuClk = clk10Hz;  // toggle後の矩形波
+            2'b11: cpuClk = clk;      // フルスピード
+        endcase
+    end
 
     // ========= 手動クロック用（debounce + edge detect） =========
     wire clkBtnDebounced;

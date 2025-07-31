@@ -24,55 +24,52 @@ module alu (
     localparam FIN = 1'b0;            
     localparam JIN = 1'b1;            
 
- JUN     4'b0100         //  2Byte Command
- JMS     4'b0101         //  2Byte Command
- INC     4'b0110
- ISZ     4'b0111         //  2Byte Command 
- ADD     4'b1000
- SUB     4'b1001
- LD      4'b1010
- XCH     4'b1011
- BBL     4'b1100
- LDM     4'b1101
-
- F*      4'b1111
-
-`define CLB     4'b0000
-`define CLC     4'b0001
-`define IAC     4'b0010
-`define CMC     4'b0011
-`define RAL     4'b0101
-`define RAR     4'b0110
-`define TCC     4'b0111
-`define DAC     4'b1000
-`define TCS     4'b1001
-`define STC     4'b1010
-`define DAA     4'b1011
-`define KBP     4'b1100
-`define DCL     4'b1101
-
-`define E*      4'b1110
-
-`define WRM     4'b0000
-`define WMP     4'b0001
-`define WRR     4'b0010
-`define WPM     4'b0011
-`define WR0     4'b0100
-`define WR1     4'b0101
-`define WR2     4'b0110
-`define WR3     4'b0111
-`define SBM     4'b1000
-`define RDM     4'b1001
-`define RDR     4'b1010
-`define ADM     4'b1011
-`define RD0     4'b1100
-`define RD1     4'b1101
-`define RD2     4'b1110
-`define RD3     4'b1111
-
+    localparam JUN = 4'h4;         //  2Byte Command
+    localparam JMS = 4'h5;         //  2Byte Command
+    localparam INC = 4'h6;
+    localparam ISZ = 4'h7;         //  2Byte Command 
     localparam ADD = 4'h8;
     localparam SUB = 4'h9;
+    localparam LD  = 4'hA;
+    localparam XCH = 4'hB;
+    localparam BBL = 4'hC;
     localparam LDM = 4'hD;
+
+    localparam F_  = 4'hF;
+
+    localparam CLB = 4'h0;
+    localparam CLC = 4'h1;
+    localparam IAC = 4'h2;
+    localparam CMC = 4'h3;
+    localparam RAL = 4'h5;
+    localparam RAR = 4'h6;
+    localparam TCC = 4'h7;
+    localparam DAC = 4'h8;
+    localparam TCS = 4'h9;
+    localparam STC = 4'hA;
+    localparam DAA = 4'hB;
+    localparam KBP = 4'hC;
+    localparam DCL = 4'hD;
+
+    localparam E_  = 4'hE;
+
+    localparam WRM = 4'h0;
+    localparam WMP = 4'h1;
+    localparam WRR = 4'h2;
+    localparam WPM = 4'h3;
+    localparam WR0 = 4'h4;
+    localparam WR1 = 4'h5;
+    localparam WR2 = 4'h6;
+    localparam WR3 = 4'h7;
+
+    localparam SBM = 4'h8;
+    localparam RDM = 4'h9;
+    localparam RDR = 4'hA;
+    localparam ADM = 4'hB;
+    localparam RD0 = 4'hC;
+    localparam RD1 = 4'hD;
+    localparam RD2 = 4'hE;
+    localparam RD3 = 4'hF;
 
 
     always @(*) begin

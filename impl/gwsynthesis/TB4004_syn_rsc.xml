@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Module name="cpuTopWith7seg" Register="1" Lut="17">
-    <SubModule name="uDiv1Hz" Register="23" Lut="51"/>
-    <SubModule name="uDiv10Hz" Register="20" Lut="35"/>
+<Module name="cpuTopWith7seg" Register="1" Lut="4">
+    <SubModule name="u_clkDiv1Hz" Register="23" Lut="45"/>
+    <SubModule name="u_clkDiv10Hz" Register="20" Lut="43"/>
+    <SubModule name="u_toggle1Hz" Register="2" Lut="8"/>
+    <SubModule name="u_toggle10Hz" Register="2" Lut="3"/>
     <SubModule name="uDebounce" Register="4" Lut="1">
-        <SubModule name="clkDivInst" Register="15" Lut="29"/>
+        <SubModule name="clkDivInst" Register="15" Lut="36"/>
     </SubModule>
     <SubModule name="uCpu">
         <SubModule name="uClockReset" Register="3" Lut="3"/>
         <SubModule name="uPc" Register="12" Alu="11" Lut="2"/>
     </SubModule>
-    <SubModule name="uDrvA" Lut="1"/>
-    <SubModule name="uDrvB" Lut="1"/>
-    <SubModule name="uMux" Register="3" Lut="55">
+    <SubModule name="uDrvC" Lut="2"/>
+    <SubModule name="uDrvD" Lut="2"/>
+    <SubModule name="uMux" Register="3" Lut="54">
         <SubModule name="uClkDiv" Register="24" Alu="23" Lut="8"/>
     </SubModule>
 </Module>
