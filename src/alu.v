@@ -13,9 +13,10 @@ module alu (
     output reg        zeroOut      // ゼロ判定
 );
 
-    // ALU操作コード定義（簡易版）
+    // ALU操作コード定義（完全版）
     localparam NOP = 4'h0;
     localparam JCN = 4'h1;          //  2Byte Command
+
     localparam H2  = 4'h2;
     localparam FIM = 1'b0;          //  2Byte Command
     localparam SRC = 1'b1;
@@ -82,6 +83,10 @@ module alu (
             NOP: begin
                 aluResult = accIn;   // 何もせずACCを通す
                 carryOut  = 1'b0;
+            end
+
+            JCN: begin
+                
             end
 
             ADD: begin

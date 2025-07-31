@@ -20,8 +20,12 @@ module decoderWithCc (
     output reg        carryFlag,
     output reg        zeroFlag,
     output reg        cplFlag,
-    output reg        testFlag
+    output reg        testFlag,
+
+    output reg        CCout
 );
+
+
 
     // 命令デコード処理
     always @(posedge clk or negedge rstN) begin
@@ -29,7 +33,6 @@ module decoderWithCc (
             carryFlag <= 1'b0;
             zeroFlag  <= 1'b0;
             cplFlag   <= 1'b0;
-            testFlag  <= 1'b0;
 
             aluEnable <= 1'b0;
             aluOp     <= 4'h0;
@@ -81,5 +84,13 @@ module decoderWithCc (
             endcase
         end
     end
+
+    always @(*) begin
+        CCout = ~testFlag | carryFlag | zeroFlag;
+        if (cplFlag) begin
+            CCout = ~CCout;
+        end
+    end
+
 
 endmodule  // decoderWithCc
