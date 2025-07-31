@@ -1,29 +1,41 @@
 // alu.v
 // ALU for LEG4
 
-`define NOP     4'b0000
-`define JCN     4'b0001         //  2Byte Command
+module alu (
+    input  wire [3:0] aluOp,       // decoder からの ALU操作コード
+    input  wire [3:0] accIn,       // ACCの値
+    input  wire [3:0] tempIn,      // Tempの値
+    input  wire [3:0] opa,         // オペランド（ROM下位4bit、またはレジスタ値）
+    input  wire       carryIn,     // CCのCarryフラグ（ADD, SUB用）
 
-`define B0010   4'b0010
-`define FIM     1'b0            //  2Byte Command   
-`define SRC     1'b1            
+    output reg  [3:0] aluResult,   // 演算結果（ACCやTempへ）
+    output reg        carryOut,    // キャリーフラグ
+    output reg        zeroOut      // ゼロ判定
+);
 
-`define B0011   4'b0011
-`define FIN     1'b0            
-`define JIN     1'b1            
+    // ALU操作コード定義（簡易版）
+    localparam NOP = 4'h0;
+    localparam JCN = 4'h1;          //  2Byte Command
+    localparam H2  = 4'h2;
+    localparam FIM = 1'b0;          //  2Byte Command
+    localparam SRC = 1'b1;
 
-`define JUN     4'b0100         //  2Byte Command
-`define JMS     4'b0101         //  2Byte Command
-`define INC     4'b0110
-`define ISZ     4'b0111         //  2Byte Command 
-`define ADD     4'b1000
-`define SUB     4'b1001
-`define LD      4'b1010
-`define XCH     4'b1011
-`define BBL     4'b1100
-`define LDM     4'b1101
+    localparam H3  = 4'h3;
+    localparam FIN = 1'b0;            
+    localparam JIN = 1'b1;            
 
-`define F*      4'b1111
+ JUN     4'b0100         //  2Byte Command
+ JMS     4'b0101         //  2Byte Command
+ INC     4'b0110
+ ISZ     4'b0111         //  2Byte Command 
+ ADD     4'b1000
+ SUB     4'b1001
+ LD      4'b1010
+ XCH     4'b1011
+ BBL     4'b1100
+ LDM     4'b1101
+
+ F*      4'b1111
 
 `define CLB     4'b0000
 `define CLC     4'b0001
@@ -58,23 +70,10 @@
 `define RD2     4'b1110
 `define RD3     4'b1111
 
-module alu (
-    input  wire [3:0] aluOp,       // decoder からの ALU操作コード
-    input  wire [3:0] accIn,       // ACCの値
-    input  wire [3:0] tempIn,      // Tempの値
-    input  wire [3:0] opa,         // オペランド（ROM下位4bit、またはレジスタ値）
-    input  wire       carryIn,     // CCのCarryフラグ（ADD, SUB用）
-
-    output reg  [3:0] aluResult,   // 演算結果（ACCやTempへ）
-    output reg        carryOut,    // キャリーフラグ
-    output reg        zeroOut      // ゼロ判定
-);
-
-    // ALU操作コード定義（簡易版）
-    localparam NOP = 4'h0;
     localparam ADD = 4'h8;
     localparam SUB = 4'h9;
     localparam LDM = 4'hD;
+
 
     always @(*) begin
         // デフォルト値

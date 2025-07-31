@@ -102,7 +102,7 @@
       "InstLine" : 108,
       "InstName" : "uAlu",
       "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/alu.v",
-      "ModuleLine" : 61,
+      "ModuleLine" : 4,
       "ModuleName" : "alu"
      },
      {
