@@ -36,7 +36,7 @@ module cpuTop (
     wire       zeroOut;
 
     // CC（decoder内）
-    wire carryFlag, zeroFlag, cplFlag, testFlag;
+    wire carryFlag, zeroFlag, cplFlag, testFlag, CCout;
 
     // Register File
     wire [3:0] regDout;
@@ -90,7 +90,9 @@ module cpuTop (
         .carryFlag(carryFlag),
         .zeroFlag(zeroFlag),
         .cplFlag(cplFlag),
-        .testFlag(testFlag)
+        .testFlag(testFlag),
+
+        .CCout(CCout)
     );
 
     // ACC & Temp

@@ -25,6 +25,64 @@ module decoderWithCc (
     output reg        CCout
 );
 
+    // ALU操作コード定義（完全版）
+    localparam NOP = 4'h0;
+    localparam JCN = 4'h1;          //  2Byte Command
+
+    localparam H2  = 4'h2;
+    localparam FIM = 1'b0;          //  2Byte Command
+    localparam SRC = 1'b1;
+
+    localparam H3  = 4'h3;
+    localparam FIN = 1'b0;            
+    localparam JIN = 1'b1;            
+
+    localparam JUN = 4'h4;         //  2Byte Command
+    localparam JMS = 4'h5;         //  2Byte Command
+    localparam INC = 4'h6;
+    localparam ISZ = 4'h7;         //  2Byte Command 
+    localparam ADD = 4'h8;
+    localparam SUB = 4'h9;
+    localparam LD  = 4'hA;
+    localparam XCH = 4'hB;
+    localparam BBL = 4'hC;
+    localparam LDM = 4'hD;
+
+    localparam F_  = 4'hF;
+
+    localparam CLB = 4'h0;
+    localparam CLC = 4'h1;
+    localparam IAC = 4'h2;
+    localparam CMC = 4'h3;
+    localparam RAL = 4'h5;
+    localparam RAR = 4'h6;
+    localparam TCC = 4'h7;
+    localparam DAC = 4'h8;
+    localparam TCS = 4'h9;
+    localparam STC = 4'hA;
+    localparam DAA = 4'hB;
+    localparam KBP = 4'hC;
+    localparam DCL = 4'hD;
+
+    localparam E_  = 4'hE;
+
+    localparam WRM = 4'h0;
+    localparam WMP = 4'h1;
+    localparam WRR = 4'h2;
+    localparam WPM = 4'h3;
+    localparam WR0 = 4'h4;
+    localparam WR1 = 4'h5;
+    localparam WR2 = 4'h6;
+    localparam WR3 = 4'h7;
+
+    localparam SBM = 4'h8;
+    localparam RDM = 4'h9;
+    localparam RDR = 4'hA;
+    localparam ADM = 4'hB;
+    localparam RD0 = 4'hC;
+    localparam RD1 = 4'hD;
+    localparam RD2 = 4'hE;
+    localparam RD3 = 4'hF;
 
 
     // 命令デコード処理

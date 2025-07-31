@@ -7,9 +7,7 @@ Analyzing Verilog file 'F:\@Tanuki_Bayashin\FPGA\TB4004\src\clockReset.v'
 Analyzing Verilog file 'F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuMicrocycle.v'
 Analyzing Verilog file 'F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v'
 Analyzing Verilog file 'F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v'
-WARN  (EX2830) : Data object 'cpuClk' is already declared("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v":86)
-Previous declaration of 'cpuClk' is from here("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v":53)
-WARN  (EX3671) : Second declaration of 'cpuClk' is ignored("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v":86)
+Undeclared symbol 'testIn', assumed default net type 'wire'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v":92)
 Analyzing Verilog file 'F:\@Tanuki_Bayashin\FPGA\TB4004\src\debounce.v'
 Analyzing Verilog file 'F:\@Tanuki_Bayashin\FPGA\TB4004\src\decoderWithCc.v'
 Analyzing Verilog file 'F:\@Tanuki_Bayashin\FPGA\TB4004\src\drv7seg.v'
@@ -34,9 +32,9 @@ Compiling module 'alu'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\alu.v":4)
 Compiling module 'registerFile'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\registerFile.v":1)
 Compiling module 'drv7seg'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\drv7seg.v":1)
 Compiling module 'mux7seg'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\mux7seg.v":1)
+WARN  (EX1998) : Net 'testIn' does not have a driver("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v":92)
 NOTE  (EX0101) : Current top module is "cpuTopWith7seg"
 [5%] Running netlist conversion ...
-WARN  (CV0016) : Input testIn is unused("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v":6)
 Running device independent optimization ...
 [10%] Optimizing Phase 0 completed
 [15%] Optimizing Phase 1 completed
@@ -52,13 +50,13 @@ Running technical mapping ...
 [75%] Tech-Mapping Phase 2 completed
 [80%] Tech-Mapping Phase 3 completed
 [90%] Tech-Mapping Phase 4 completed
-WARN  (NL0002) : The module "accTempRegs" instantiated to "uAccTemp" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":105)
-WARN  (NL0002) : The module "alu" instantiated to "uAlu" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":117)
-WARN  (NL0002) : The module "decoderWithCc" instantiated to "uDecoder" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":94)
-WARN  (NL0002) : The module "registerFile" instantiated to "uRegisters" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":127)
+WARN  (NL0002) : The module "accTempRegs" instantiated to "uAccTemp" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":107)
+WARN  (NL0002) : The module "alu" instantiated to "uAlu" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":119)
+WARN  (NL0002) : The module "decoderWithCc" instantiated to "uDecoder" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":96)
+WARN  (NL0002) : The module "registerFile" instantiated to "uRegisters" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":129)
 WARN  (NL0002) : The module "rom" instantiated to "uRom" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":72)
-WARN  (NL0002) : The module "drv7seg" instantiated to "uDrvA" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v":111)
-WARN  (NL0002) : The module "drv7seg" instantiated to "uDrvB" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v":112)
+WARN  (NL0002) : The module "drv7seg" instantiated to "uDrvA" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v":100)
+WARN  (NL0002) : The module "drv7seg" instantiated to "uDrvB" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v":101)
 [95%] Generate netlist file "F:\@Tanuki_Bayashin\FPGA\TB4004\impl\gwsynthesis\TB4004.vg" completed
 [100%] Generate report file "F:\@Tanuki_Bayashin\FPGA\TB4004\impl\gwsynthesis\TB4004_syn.rpt.html" completed
 GowinSynthesis finish

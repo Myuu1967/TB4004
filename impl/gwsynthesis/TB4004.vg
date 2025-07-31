@@ -1,7 +1,7 @@
 //
 //Written by GowinSynthesis
 //Tool Version "V1.9.9"
-//Thu Jul 31 18:19:39 2025
+//Thu Jul 31 23:49:08 2025
 
 //Source file index table:
 //file0 "\F:/@Tanuki_Bayashin/FPGA/TB4004/src/accTempRegs.v"
@@ -3349,7 +3349,6 @@ module cpuTopWith7seg (
   clkBtn,
   clkSel,
   nRst,
-  testIn,
   seg,
   segDig
 )
@@ -3358,7 +3357,6 @@ input clk;
 input clkBtn;
 input [1:0] clkSel;
 input nRst;
-input testIn;
 output [7:0] seg;
 output [3:0] segDig;
 wire clk_d;

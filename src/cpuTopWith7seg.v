@@ -82,17 +82,6 @@ module cpuTopWith7seg (
     end
     assign stepClk = (prevBtn == 1'b1 && clkBtnDebounced == 1'b0);
 
-    // ========= クロック切替 =========
-    reg cpuClk;
-    always @(*) begin
-        case (clkSel)
-            2'b00: cpuClk = stepClk;  // ボタン1回押すごとに1ステップ
-            2'b01: cpuClk = clk1Hz;   // 1Hz
-            2'b10: cpuClk = clk10Hz;  // 10Hz
-            2'b11: cpuClk = clk;      // フルスピード（50MHz）
-        endcase
-    end
-
     // ========= CPUコア =========
     wire [11:0] pcAddr;
     wire [3:0]  accDebug;
