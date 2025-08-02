@@ -5,7 +5,8 @@ module cpuTop (
 
     // デバッグ用
     output wire [11:0] pcAddr,
-    output wire [3:0]  accDebug
+    output wire [3:0]  accDebug,
+    output wire        cycleOut
 );
 
     // ======== 内部配線 ========
@@ -40,6 +41,19 @@ module cpuTop (
 
     // Register File
     wire [3:0] regDout;
+
+    // ======== 仮追加 ========
+    // decoderから将来出す信号
+    wire decoderUseImm;  // ← decoder からの本物の信号を受ける
+
+
+    // M2でラッチされる予定の OPA nibble（今はROMのまま直結）
+    wire [3:0] opaNibble;
+    assign opaNibble = romData;    // TODO: M2 latch実装後に置き換え
+
+    // ALUに渡すオペランド（即値かレジスタか）
+    wire [3:0] aluOpaSrc;
+    assign aluOpaSrc = (decoderUseImm) ? opaNibble : regDout;
 
     // ======== モジュール接続 ========
 
@@ -76,7 +90,7 @@ module cpuTop (
         .clk(clk),
         .rstN(rstN),
         .opr(romData),    
-        .opa(4'h0),       // ← M2の実装がまだ途中
+        .opa(4'h0),       // TODO: M2 latch後にopaNibbleを接続
         .cycle(cycle),
         .carryFromAlu(carryOut),
         .zeroFromAlu(zeroOut),
@@ -86,13 +100,17 @@ module cpuTop (
         .aluOp(aluOp),
         .accWe(accWe),
         .tempWe(tempWe),
+        .regWe(regWe),
 
         .carryFlag(carryFlag),
         .zeroFlag(zeroFlag),
         .cplFlag(cplFlag),
         .testFlag(testFlag),
+        .CCout(CCout),
 
-        .CCout(CCout)
+        // ✅ decoderUseImm 信号を追加
+        .decoderUseImm(decoderUseImm)
+
     );
 
     // ACC & Temp
@@ -100,20 +118,17 @@ module cpuTop (
         .clk(clk),
         .rstN(rstN),
         .aluResult(aluResult),
-        .accOutForTemp(accOut),   // ✅ temp←ACCの対応時に追加
+        .accOutForTemp(accOut),   // ✅ temp←ACC の対応時に追加
         .accWe(accWe),
         .tempWe(tempWe),
         .accOut(accOut),
         .tempOut(tempOut)
     );
 
-    // OPAが中身かで対応を変化させる（decoderUseImmはdecorderで発生させる）
-    wire [3:0] aluOpaSrc;
-    assign aluOpaSrc = (decoderUseImm) ? opaNibble : regDout;
-
+    // ALU
     alu uAlu (
         .aluOp(aluOp),
-        .accIn(accOutWire),
+        .accIn(accOut),        // ✅ accOutWire→accOut に修正
         .tempIn(tempOut),
         .opa(aluOpaSrc),
         .carryIn(carryFlag),
@@ -126,7 +141,7 @@ module cpuTop (
     registerFile uRegisters (
         .clk(clk),
         .rstN(rstN),
-        .regWe(1'b0),
+        .regWe(regWe),      // 改造 OPAに即値も使えるようにする
         .regAddr(4'h0),
         .regDin(4'h0),
         .regDout(regDout)

@@ -15,14 +15,17 @@ module decoderWithCc (
     // レジスタ制御信号
     output reg        accWe,
     output reg        tempWe,
+    output reg        regWe,
 
     // CCフラグ
     output reg        carryFlag,
     output reg        zeroFlag,
     output reg        cplFlag,
     output reg        testFlag,
+    output reg        CCout,
 
-    output reg        CCout
+    // ✅ 追加
+    output reg  decoderUseImm
 );
 
     // ALU操作コード定義（完全版）
@@ -104,6 +107,7 @@ module decoderWithCc (
 
             accWe     <= 1'b0;
             tempWe    <= 1'b0;
+            regWe     <= 1'b0;    // ✅ これも毎サイクル初期化
 
         end else begin
             // testFlagは常時外部ピンの値を反映
@@ -114,6 +118,7 @@ module decoderWithCc (
             aluOp     <= 4'h0;
             accWe     <= 1'b0;
             tempWe    <= 1'b0;
+            regWe     <= 1'b0;    // ✅ これも毎サイクル初期化
 
             // 全命令共通：X1 (cycle=5) で temp←ACC
             if (cycle == 3'd5) begin
@@ -176,7 +181,7 @@ module decoderWithCc (
                     end
                 end
 
-                F_: begin // CC系 (CLC, STC, CMC)
+                4'hF : begin // CC系 (CLC, STC, CMC)
                     if (opa == CLC && cycle == 3'd7) begin
                         carryFlag <= 1'b0; // CLC (Carry Clear)
                     end
@@ -195,5 +200,13 @@ module decoderWithCc (
         end
     end
 
+    always @(*) begin
+        decoderUseImm = 1'b0;   // デフォルトは 0（即値ではない）
+        case (opr)
+            4'b1101: decoderUseImm = 1'b1;  // ✅ LDM のとき即値を使う
+            // 必要に応じて LD A, #imm みたいな命令でも追加
+            default: decoderUseImm = 1'b0;
+        endcase
+    end
 
 endmodule  // decoderWithCc
