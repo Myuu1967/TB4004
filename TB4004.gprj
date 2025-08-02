@@ -15,8 +15,10 @@
         <File path="src/debounce.v" type="file.verilog" enable="1"/>
         <File path="src/decoderWithCc.v" type="file.verilog" enable="1"/>
         <File path="src/drv7seg.v" type="file.verilog" enable="1"/>
+        <File path="src/io.v" type="file.verilog" enable="1"/>
         <File path="src/mux7seg.v" type="file.verilog" enable="1"/>
         <File path="src/pc.v" type="file.verilog" enable="1"/>
+        <File path="src/ram.v.v" type="file.verilog" enable="1"/>
         <File path="src/registerFile.v" type="file.verilog" enable="1"/>
         <File path="src/rom.v" type="file.verilog" enable="1"/>
         <File path="src/stack.v" type="file.verilog" enable="1"/>

@@ -22,16 +22,24 @@ module stack (
 
     // 8段の12bitスタック
     reg [11:0] stackMem [0:7];
+    integer i;
 
     always @(posedge clk or negedge rstN) begin
         if (!rstN) begin
             sp        <= 3'd0;
             overflow  <= 1'b0;
             underflow <= 1'b0;
+
+            // ✅ リセット時にスタック全段クリア
+            for (i = 0; i < 8; i = i + 1) begin
+                stackMem[i] <= 12'd0;
+            end
+
         end else begin
+        // PUSHとPOPが同時にHighならPUSHを優先
             // PUSH
-            if (push) begin
-                if (sp == 3'd7) begin
+            if (push && !pop) begin
+                if (sp >= 3'd7) begin
                     overflow <= 1'b1; // 8段を超えた
                 end else begin
                     sp <= sp + 3'd1;
@@ -40,7 +48,7 @@ module stack (
             end
 
             // POP
-            if (pop) begin
+            if (pop && !push) begin
                 if (sp == 3'd0) begin
                     underflow <= 1'b1; // 空の状態でPOP
                     pcOut <= 12'h000;

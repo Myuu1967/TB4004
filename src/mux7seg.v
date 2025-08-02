@@ -1,5 +1,6 @@
 module mux7seg (
     input  wire clk,
+    input  wire rstN,
     input  wire [7:0] segA,
     input  wire [7:0] segB,
     input  wire [7:0] segC,
@@ -14,7 +15,7 @@ module mux7seg (
     // 10kHz クロック生成用分周
     clkDiv uClkDiv (
         .clk(clk),
-        .rst(1'b0),
+        .rstN(rstN),
         .maxCount(24'd1200),
         .tc(clk10Khz)
     );

@@ -8,7 +8,7 @@ module drv7seg (
     function [6:0] segPattern;
         input [3:0] value;
         begin
-            case (value)
+            case (value)    //  0~9 a b c d e f g の順
                 4'h0: segPattern = 7'h3F; // 011_1111
                 4'h1: segPattern = 7'h06; // 000_0110
                 4'h2: segPattern = 7'h5B; // 101_1011

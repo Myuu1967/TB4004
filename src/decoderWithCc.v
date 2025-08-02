@@ -84,6 +84,13 @@ module decoderWithCc (
     localparam RD2 = 4'hE;
     localparam RD3 = 4'hF;
 
+    always @(*) begin
+        CCout = 1'b0; // デフォルト
+        CCout = (~testFlag & opa[0]) | (carryFlag & opa[1]) | (zeroFlag & opa[2]);
+        if (opa[3]) begin
+            CCout = ~CCout;
+        end
+    end
 
     // 命令デコード処理
     always @(posedge clk or negedge rstN) begin
@@ -140,13 +147,6 @@ module decoderWithCc (
                     // 未定義命令 → 何もしない
                 end
             endcase
-        end
-    end
-
-    always @(*) begin
-        CCout = ~testFlag | carryFlag | zeroFlag;
-        if (cplFlag) begin
-            CCout = ~CCout;
         end
     end
 

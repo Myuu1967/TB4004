@@ -87,7 +87,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">Created Time</td>
-<td>Wed Jul 30 22:40:01 2025
+<td>Sat Aug  2 17:32:52 2025
 </td>
 </tr>
 <tr>
@@ -100,22 +100,22 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <table class="summary_table">
 <tr>
 <td class="label">Total Power (mW)</td>
-<td>26.889</td>
+<td>27.211</td>
 </tr>
 <tr>
 <td class="label">Quiescent Power (mW)</td>
-<td>25.328</td>
+<td>25.415</td>
 </tr>
 <tr>
 <td class="label">Dynamic Power (mW)</td>
-<td>1.561</td>
+<td>1.796</td>
 </tr>
 </table>
 <h2><a name="Thermal_Info">Thermal Information:</a></h2>
 <table class="summary_table">
 <tr>
 <td class="label">Junction Temperature</td>
-<td>25.812</td>
+<td>25.820</td>
 </tr>
 <tr>
 <td class="label">Theta JA</td>
@@ -123,7 +123,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">Max Allowed Ambient Temperature</td>
-<td>84.188</td>
+<td>84.180</td>
 </tr>
 </table>
 <h2><a name="Configure_Info">Configure Information:</a></h2>
@@ -192,23 +192,23 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <tr>
 <td>VCC</td>
 <td>2.500</td>
-<td>0.308</td>
-<td>9.066</td>
-<td>23.433</td>
+<td>0.313</td>
+<td>9.098</td>
+<td>23.527</td>
 </tr>
 <tr>
 <td>VCCX</td>
 <td>2.500</td>
-<td>0.185</td>
+<td>0.236</td>
 <td>0.682</td>
-<td>2.167</td>
+<td>2.296</td>
 </tr>
 <tr>
 <td>VCCIO18</td>
 <td>1.800</td>
-<td>0.183</td>
-<td>0.533</td>
-<td>1.289</td>
+<td>0.235</td>
+<td>0.536</td>
+<td>1.388</td>
 </tr>
 </table>
 <h1><a name="Detail">Power Details</a></h1>
@@ -222,15 +222,15 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td>Logic</td>
-<td>0.296</td>
+<td>0.181</td>
 <td>NA</td>
-<td>20.124</td>
+<td>10.726</td>
 </tr>
 <tr>
 <td>IO</td>
-<td>2.898
-<td>1.643
-<td>13.603
+<td>3.667
+<td>2.062
+<td>11.250
 </tr>
 </table>
 <h2><a name="By_Hierarchy">Power By Hierarchy:</a></h2>
@@ -242,12 +242,12 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td>cpuTopWith7seg</td>
-<td>0.296</td>
-<td>0.296(0.259)</td>
+<td>0.181</td>
+<td>0.181(0.135)</td>
 <tr>
 <td>cpuTopWith7seg/uCpu/</td>
-<td>0.027</td>
-<td>0.027(0.027)</td>
+<td>0.026</td>
+<td>0.026(0.026)</td>
 <tr>
 <td>cpuTopWith7seg/uCpu/uClockReset/</td>
 <td>0.001</td>
@@ -265,29 +265,37 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <td>0.037</td>
 <td>0.037(0.000)</td>
 <tr>
-<td>cpuTopWith7seg/uDiv10Hz/</td>
-<td>0.039</td>
-<td>0.039(0.000)</td>
+<td>cpuTopWith7seg/uDrvC/</td>
+<td>0.001</td>
+<td>0.001(0.000)</td>
 <tr>
-<td>cpuTopWith7seg/uDiv1Hz/</td>
-<td>0.049</td>
-<td>0.049(0.000)</td>
-<tr>
-<td>cpuTopWith7seg/uDrvA/</td>
-<td>0.000</td>
-<td>0.000(0.000)</td>
-<tr>
-<td>cpuTopWith7seg/uDrvB/</td>
+<td>cpuTopWith7seg/uDrvD/</td>
 <td>0.000</td>
 <td>0.000(0.000)</td>
 <tr>
 <td>cpuTopWith7seg/uMux/</td>
-<td>0.101</td>
-<td>0.101(0.089)</td>
+<td>0.030</td>
+<td>0.030(0.018)</td>
 <tr>
 <td>cpuTopWith7seg/uMux/uClkDiv/</td>
-<td>0.089</td>
-<td>0.089(0.000)</td>
+<td>0.018</td>
+<td>0.018(0.000)</td>
+<tr>
+<td>cpuTopWith7seg/u_clkDiv10Hz/</td>
+<td>0.014</td>
+<td>0.014(0.000)</td>
+<tr>
+<td>cpuTopWith7seg/u_clkDiv1Hz/</td>
+<td>0.016</td>
+<td>0.016(0.000)</td>
+<tr>
+<td>cpuTopWith7seg/u_toggle10Hz/</td>
+<td>0.003</td>
+<td>0.003(0.000)</td>
+<tr>
+<td>cpuTopWith7seg/u_toggle1Hz/</td>
+<td>0.002</td>
+<td>0.002(0.000)</td>
 </table>
 <h2><a name="By_Clock_Domain">Power By Clock Domain:</a></h2>
 <table class="detail_table">
@@ -297,19 +305,9 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <th class="label">Total Dynamic Power(mW)</th>
 </tr>
 <tr>
-<td>clk</td>
-<td>50.000</td>
-<td>0.243</td>
-</tr>
-<tr>
-<td>uDebounce/clk400Hz</td>
-<td>50.000</td>
-<td>0.017</td>
-</tr>
-<tr>
 <td>cpuClk</td>
 <td>50.000</td>
-<td>0.041</td>
+<td>0.043</td>
 </tr>
 <tr>
 <td>NO CLOCK DOMAIN</td>
@@ -317,9 +315,19 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <td>0.000</td>
 </tr>
 <tr>
-<td>uMux/clk10Khz</td>
+<td>uMux/clk10Khz_5</td>
 <td>50.000</td>
-<td>0.006</td>
+<td>0.009</td>
+</tr>
+<tr>
+<td>clk</td>
+<td>50.000</td>
+<td>0.125</td>
+</tr>
+<tr>
+<td>uDebounce/clk400Hz</td>
+<td>50.000</td>
+<td>0.014</td>
 </tr>
 </table>
 </div><!-- content -->

@@ -42,4 +42,9 @@ module pc (
         pcHigh = pcFull[11:8];
     end
 
+//    assign pcLow  = pcFull[3:0];
+//    assign pcMid  = pcFull[7:4];
+//    assign pcHigh = pcFull[11:8];
+
+
 endmodule  // pc

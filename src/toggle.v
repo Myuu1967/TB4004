@@ -1,14 +1,14 @@
 module toggle (
     input      clk,
-    input      rst,   // 正論理リセットに変更
+    input      rstN,   // 正論理リセットに変更
     input      in,
     output reg out
 );
 
     reg prevIn;
 
-    always @(posedge rst or posedge clk) begin
-        if (rst) begin
+    always @(negedge rstN or posedge clk) begin
+        if (!rstN) begin
             out     <= 1'b0;
             prevIn  <= 1'b0;
         end else begin

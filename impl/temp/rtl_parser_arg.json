@@ -42,11 +42,19 @@
    "Type" : "verilog"
   },
   {
+   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/io.v",
+   "Type" : "verilog"
+  },
+  {
    "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/mux7seg.v",
    "Type" : "verilog"
   },
   {
    "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/pc.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/ram.v.v",
    "Type" : "verilog"
   },
   {

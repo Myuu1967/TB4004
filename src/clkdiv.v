@@ -1,14 +1,14 @@
 module clkDiv (
     input        clk,
-    input        rst,
+    input        rstN,
     input  [23:0] maxCount,
     output       tc
 );
 
     reg [23:0] count;
 
-    always @(posedge clk or posedge rst) begin 
-        if (rst == 1'b1) begin
+    always @(posedge clk or negedge rstN) begin 
+        if (!rstN) begin
             count <= 24'd0;
         end else begin
             if (tc == 1'b1) 

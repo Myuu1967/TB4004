@@ -4,6 +4,14 @@ module rom (
     output reg  [3:0]  nibble   // 4bit出力（CPUに渡す）
 );
 
+    // ⚠️【将来的な改造ポイント】
+    // 現在は cycle(3,4) に応じて上位/下位NibbleをROMから出力している。
+    // しかし、FIM/JMSなど「命令以外でROMを読む」ケースでは
+    // Decoder側から「どのNibbleを読むか」「いつ読むか」を制御できると便利。
+    // → 後で romRe(ROM Read Enable) や romByteSel(上位/下位選択) を追加し、
+    //    DecoderがROMアクセスを完全管理する方式に切り替える予定。
+    // ※ その際は default: nibble = 4'hZ; も再検討（Bus制御側で処理する想定）
+
     // 4K×8bit ROM
     reg [7:0] romMem [0:4095];
 
@@ -37,7 +45,7 @@ module rom (
         case (cycle)
             3'd3: nibble = romMem[addr][7:4]; // M1 → 上位4bit
             3'd4: nibble = romMem[addr][3:0]; // M2 → 下位4bit
-            default: nibble = 4'hZ;           // それ以外のサイクルはバス解放（Z）
+            default: nibble = 4'h0;           // それ以外のサイクルはバス解放（Z）
         endcase
     end
 
