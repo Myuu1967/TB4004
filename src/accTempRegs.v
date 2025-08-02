@@ -4,6 +4,8 @@ module accTempRegs (
 
     // ALUからの4bit結果
     input  wire [3:0] aluResult,
+    // ACCの値（tempに書き込む用）
+    input  wire [3:0] accOutForTemp,  // ✅ 新規追加
 
     // 書き込み制御
     input  wire       accWe,
@@ -20,8 +22,14 @@ module accTempRegs (
             accOut  <= 4'd0;
             tempOut <= 4'd0;
         end else begin
+            // ✅ temp←ACC の処理
+            if (tempWe) tempOut <= accOutForTemp;
+
+            // ✅ ACC 書き込み（ALU結果）
             if (accWe)  accOut  <= aluResult;
-            if (tempWe) tempOut <= aluResult;
+
+//            if (accWe)  accOut  <= aluResult;
+//            if (tempWe) tempOut <= aluResult;
         end
     end
 

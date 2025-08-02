@@ -115,31 +115,76 @@ module decoderWithCc (
             accWe     <= 1'b0;
             tempWe    <= 1'b0;
 
+            // 全命令共通：X1 (cycle=5) で temp←ACC
+            if (cycle == 3'd5) begin
+                tempWe <= 1'b1;
+            end
             case (opr)
                 4'h0: begin 
                     // NOP（何もしない）
                 end
 
-                4'h8: begin // ADD (例: ACC = ACC + (OPA指定レジスタ) + Carry)
+                // ADD
+                4'h8: begin
                     aluEnable <= 1'b1;
-                    aluOp     <= 4'h8;  // ADD命令
-                    if (cycle == 3'd7) begin // X3サイクルで結果書き込み
+                    aluOp     <= 4'h8;
+                    if (cycle == 3'd7) begin
                         accWe     <= 1'b1;
-                        // フラグ更新
                         carryFlag <= carryFromAlu;
                         zeroFlag  <= zeroFromAlu;
                     end
                 end
 
-                4'hF: begin // CC系 (CLC, STC, CMC)
-                    if (opa == 4'h1 && cycle == 3'd7) begin
+                // SUB
+                4'h9: begin
+                    aluEnable <= 1'b1;
+                    aluOp     <= 4'h9;
+                    if (cycle == 3'd7) begin
+                        accWe     <= 1'b1;
+                        carryFlag <= carryFromAlu;
+                        zeroFlag  <= zeroFromAlu;
+                    end
+                end
+
+                // LD
+                4'hA: begin
+                    aluEnable <= 1'b1;
+                    aluOp     <= 4'hA;
+                    if (cycle == 3'd7) begin
+                        accWe     <= 1'b1;
+                        zeroFlag  <= zeroFromAlu;
+                        // carryFlagは変更しない
+                    end
+                end
+
+                // XCH（ACCとレジスタの交換）
+                4'hB: begin
+                    if (cycle == 3'd7) begin
+                        accWe   <= 1'b1;    // ACCにも書く
+                        regWe   <= 1'b1;    // RegisterFileにも書く
+                    end
+                end
+
+                // LDM (ACCに即値ロード)
+                4'hD: begin
+                    aluEnable <= 1'b1;
+                    aluOp     <= 4'hD;  // ALUにLDM指定
+                    if (cycle == 3'd7) begin
+                        accWe     <= 1'b1;       // ACCに書き込む
+                        zeroFlag  <= zeroFromAlu; // Zeroフラグ更新
+                        // carryFlag は変更しない
+                    end
+                end
+
+                F_: begin // CC系 (CLC, STC, CMC)
+                    if (opa == CLC && cycle == 3'd7) begin
                         carryFlag <= 1'b0; // CLC (Carry Clear)
                     end
-                    if (opa == 4'hA && cycle == 3'd7) begin
-                        carryFlag <= 1'b1; // STC (Carry Set)
-                    end
-                    if (opa == 4'h3 && cycle == 3'd7) begin
+                    if (opa == CMC && cycle == 3'd7) begin
                         carryFlag <= ~carryFlag; // CMC (Carry Complement)
+                    end
+                    if (opa == STC && cycle == 3'd7) begin
+                        carryFlag <= 1'b1; // STC (Carry Set)
                     end
                 end
 

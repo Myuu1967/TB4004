@@ -89,15 +89,25 @@ module alu (
                 
             end
 
+            // ADD: ACC + reg + carry
             ADD: begin
                 {carryOut, aluResult} = accIn + opa + carryIn;
             end
 
+            // SUB: ACC - reg - carry
             SUB: begin
                 // SUB: ACC - OPA - carry
                 // キャリーはボローとして扱う
                 {carryOut, aluResult} = {1'b0, accIn} - opa - carryIn;
             end
+
+            // LD: reg → ACC
+            LD: begin
+                aluResult = opa;   // opa=regDout
+                carryOut  = carryIn;
+            end
+
+            // XCHはALU経由しない（decoderで処理）
 
             LDM: begin
                 // LDM: ACCに即値をロード
