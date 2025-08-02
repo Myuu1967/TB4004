@@ -107,12 +107,15 @@ module cpuTop (
         .tempOut(tempOut)
     );
 
-    // ALU
+    // OPAが中身かで対応を変化させる（decoderUseImmはdecorderで発生させる）
+    wire [3:0] aluOpaSrc;
+    assign aluOpaSrc = (decoderUseImm) ? opaNibble : regDout;
+
     alu uAlu (
         .aluOp(aluOp),
-        .accIn(accOut),
+        .accIn(accOutWire),
         .tempIn(tempOut),
-        .opa(4'h0),           // ← 本来 regDout を繋ぐ予定
+        .opa(aluOpaSrc),
         .carryIn(carryFlag),
         .aluResult(aluResult),
         .carryOut(carryOut),
