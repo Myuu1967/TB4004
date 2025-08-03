@@ -64,7 +64,10 @@ module cpuTop (
 
     // ALUに渡すオペランド（即値かレジスタか）
     wire [3:0] aluOpaSrc;
-    assign aluOpaSrc = (decoderUseImm) ? opaNibble : regDout;
+    assign aluOpaSrc = (aluSel == 2'b00) ? regDout :
+                       (aluSel == 2'b01) ? opaNibble :
+                       (aluSel == 2'b10) ? ramDataOut :
+                                       4'd0;
 
     // ======== モジュール接続 ========
 
@@ -119,7 +122,7 @@ module cpuTop (
 
     assign ramDin = accOut;
     assign ramAddr = { bankSel, pairDout };   // 上位4bitがバンク、下位8bitがレジスタペアの値
-    assign ramRe = 1'b0;   // WRMだけなら読み出し不要
+    //assign ramRe = 1'b0;   // WRMだけなら読み出し不要
 
 
 
@@ -151,7 +154,7 @@ module cpuTop (
         .CCout(CCout),
 
         // ✅ decoderUseImm, regSrcSel 信号を追加
-        .decoderUseImm(decoderUseImm),
+        .aluSel(aluSel),
         .regSrcSel(regSrcSel),
         // ✅ ペアレジスタ関連信号
         .pairWe(pairWe),

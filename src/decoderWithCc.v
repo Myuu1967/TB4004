@@ -30,7 +30,7 @@ module decoderWithCc (
     output reg        CCout,
 
     // ✅ 追加
-    output reg        decoderUseImm,
+    output reg [1:0]  aluSel,  // 00=reg, 01=imm, 10=RAM
     output reg        regSrcSel,
     output reg        pairWe,
     output reg [3:0]  pairAddr,
@@ -130,8 +130,8 @@ module decoderWithCc (
             ioWe      <= 1'b0;
             ioRe      <= 1'b0;
 
-            decoderUseImm <= 1'b0;   // ✅ リセット時も初期化
-            regSrcSel     <= 1'b0;   // ✅ ← 追加！
+            aluSel    <= 2'b00;  // 00=reg, 01=imm, 10=RAM
+            regSrcSel <= 1'b0;   // ✅ ← 追加！
             bankSelWe <= 1'b0;
             bankSelData <= 4'd0;
 
@@ -154,8 +154,9 @@ module decoderWithCc (
             ioWe      <= 1'b0;
             ioRe      <= 1'b0;
 
-            decoderUseImm <= 1'b0;   // 
-            regSrcSel     <= 1'b0;   // ✅ ← 追加！
+            // reset & 毎クロック初期化
+            aluSel <= 2'b11;  // 00=reg, 01=imm, 10=RAM, 11=未定義
+            regSrcSel <= 1'b0;   // ✅ ← 追加！
             bankSelWe <= 1'b0;
             bankSelData <= 4'd0;
 
@@ -170,6 +171,8 @@ module decoderWithCc (
             end
 
             case (opr)
+            //    4'h0: // NOP
+
                 // FIM命令（将来用）
                 4'h2: begin
                     if (opa[0] == 1'b0) begin // FIM（RRR0）
@@ -185,7 +188,8 @@ module decoderWithCc (
                     aluEnable <= 1'b1;   // X2 から ALU計算は常時動く
                     aluOp     <= INC;
                     if (cycle == 3'd7) begin  // ✅ X3 サイクルで書き込み
-                        regWe     <= 1'b1; 
+                        regWe     <= 1'b1;
+                        aluSel    <= 2'b00;  // 00=reg, 01=imm, 10=RAM
                         carryFlag <= carryFromAlu;
                         zeroFlag  <= zeroFromAlu;
                     end
@@ -196,6 +200,7 @@ module decoderWithCc (
                     aluOp     <= ADD;
                     if (cycle == 3'd7) begin
                         accWe     <= 1'b1;
+                        aluSel    <= 2'b00;  // 00=reg, 01=imm, 10=RAM
                         carryFlag <= carryFromAlu;
                         zeroFlag  <= zeroFromAlu;
                     end
@@ -209,6 +214,7 @@ module decoderWithCc (
                     aluOp     <= SUB;
                     if (cycle == 3'd7) begin
                         accWe     <= 1'b1;
+                        aluSel    <= 2'b00;  // 00=reg, 01=imm, 10=RAM
                         carryFlag <= carryFromAlu;
                         zeroFlag  <= zeroFromAlu;
                     end
@@ -222,6 +228,7 @@ module decoderWithCc (
                     aluOp     <= LD;
                     if (cycle == 3'd7) begin
                         accWe     <= 1'b1;
+                        aluSel    <= 2'b00;  // 00=reg, 01=imm, 10=RAM
                         zeroFlag  <= zeroFromAlu;
                         // carryFlag は変更しない
                     end
@@ -233,8 +240,9 @@ module decoderWithCc (
                 XCH: begin
                     if (cycle == 3'd7) begin
                         accWe       <= 1'b1;    // ACCにも書く
+                        aluSel      <= 2'b00;   // 00=reg, 01=imm, 10=RAM
                         regWe       <= 1'b1;    // RegisterFileにも書く
-                        regSrcSel   <= 1'b1;   // ✅ Tempから書き込み
+                        regSrcSel   <= 1'b1;    // ✅ Tempから書き込み
                     end
                 end
 
@@ -242,7 +250,8 @@ module decoderWithCc (
                 // BBL（RET命令）
                 // ===========================
                 BBL: begin
-                    decoderUseImm <= 1'b1;   // ✅ BBLでも即値を使う
+                    // ✅ BBLでも即値を使う
+                    aluSel    <= 2'b01;  // 00=reg, 01=imm, 10=RAM
                     aluEnable <= 1'b1;
                     aluOp     <= BBL;
                     if (cycle == 3'd7) begin
@@ -257,7 +266,7 @@ module decoderWithCc (
                 LDM: begin
                     aluEnable <= 1'b1;
                     aluOp     <= LDM;  // ALU経由で即値をACCに書き込む
-                    decoderUseImm <= 1'b1;    // ✅ ここに含める！
+                    aluSel    <= 2'b01;  // 00=reg, 01=imm, 10=RAM   // ✅ ここに含める！
                     if (cycle == 3'd7) begin
                         accWe     <= 1'b1;
                         zeroFlag  <= zeroFromAlu;
@@ -279,13 +288,16 @@ module decoderWithCc (
                         WMP, WRR : if (cycle == 3'd7) ioWe <= 1'b1;
 
                         // =========  書き込み/読み込み　4008/4009, 4289 =========
-                        WPM: ramRe <= ramRe;    // 実質NOP
+                        WPM: ramRe <= ramRe;    // NOP扱い（4008/4009, 4289専用命令 未対応）
                         // ========= RAM 読み出し =========
                         SBM: begin
-                            if (cycle == 3'd7) begin
+                            if (cycle == 3'd6) begin
                                 ramRe  <= 1'b1;
+                                aluSel    <= 2'b10;  // 00=reg, 01=imm, 10=RAM
                                 aluEnable <= 1'b1;
                                 aluOp     <= SUB;
+                            end
+                            if (cycle == 3'd7) begin
                                 accWe     <= 1'b1;
                                 carryFlag <= carryFromAlu;
                                 zeroFlag  <= zeroFromAlu;
@@ -300,10 +312,13 @@ module decoderWithCc (
                         end
 
                         ADM: begin
-                            if (cycle == 3'd7) begin
+                            if (cycle == 3'd6) begin
                                 ramRe  <= 1'b1;
+                                aluSel    <= 2'b10;  // 00=reg, 01=imm, 10=RAM
                                 aluEnable <= 1'b1;
                                 aluOp     <= ADD;
+                            end
+                            if (cycle == 3'd7) begin
                                 accWe     <= 1'b1;
                                 carryFlag <= carryFromAlu;
                                 zeroFlag  <= zeroFromAlu;
@@ -320,7 +335,7 @@ module decoderWithCc (
                         // ========= ROM 読み出し =========
                         RDR: begin
                             if (cycle == 3'd7) begin
-                                ioRe  <= 1'b1;   // ✅ ioRe ではなく romRe に変更
+                                ioRe  <= 1'b1;   // ✅ ioRe
                                 accWe <= 1'b1;
                             end
                         end
@@ -329,17 +344,6 @@ module decoderWithCc (
                             // 未定義命令は何もしない
                         end
 
-                    endcase
-                end
-                E_: begin
-                    case (opa)
-                        WRM: begin
-                            if (cycle == 3'd7) begin
-                                ramWe  <= 1'b1;
-                                // ramAddr, ramDin は cpuTop 側で常時接続
-                            end
-                        end
-                        // 他の E系命令はあとで
                     endcase
                 end
 
