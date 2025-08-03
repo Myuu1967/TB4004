@@ -1,12 +1,10 @@
 module cpuTop (
     input  wire clk,         // toggle.v からのクロック
     input  wire rstN,        // リセット
-    input  wire testIn,      // TESTピン（CC用）
 
     // デバッグ用
     output wire [11:0] pcAddr,
-    output wire [3:0]  accDebug,
-    output wire [2:0]  cycleOut
+    output wire [3:0]  accDebug
 );
 
     // ======== 内部配線 ========
@@ -38,7 +36,7 @@ module cpuTop (
     wire       zeroOut;
 
     // CC（decoder内）
-    wire carryFlag, zeroFlag, cplFlag, testFlag, CCout;
+    wire carryFlag, zeroFlag, CCout;
 
     // Register File
     wire [3:0] regDout;
@@ -49,7 +47,7 @@ module cpuTop (
 
     // ======== 仮追加 ========
     // decoderから将来出す信号
-    wire decoderUseImm;  // ← decoder からの本物の信号を受ける
+    // wire decoderUseImm;  // ← decoder からの本物の信号を受ける
 
 
     // M2でラッチされる予定の OPA nibble（今はROMのまま直結）
@@ -99,7 +97,7 @@ module cpuTop (
         .cycle(cycle),
         .carryFromAlu(carryOut),
         .zeroFromAlu(zeroOut),
-        .testIn(testIn),
+        .testFlag(testFlag),
 
         .aluEnable(aluEnable),
         .aluOp(aluOp),
@@ -110,8 +108,6 @@ module cpuTop (
 
         .carryFlag(carryFlag),
         .zeroFlag(zeroFlag),
-        .cplFlag(cplFlag),
-        .testFlag(testFlag),
         .CCout(CCout),
 
         // ✅ decoderUseImm, regSrcSel 信号を追加

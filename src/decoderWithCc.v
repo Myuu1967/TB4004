@@ -6,7 +6,7 @@ module decoderWithCc (
     input  wire [2:0] cycle,        // A1〜X3 (0〜7)
     input  wire       carryFromAlu,
     input  wire       zeroFromAlu,
-    input  wire       testIn,       // 外部TESTピン
+    input  wire       testFlag,     // 外部TESTピン
 
     // ALU制御信号
     output reg        aluEnable,
@@ -21,8 +21,6 @@ module decoderWithCc (
     // CCフラグ
     output reg        carryFlag,
     output reg        zeroFlag,
-    output reg        cplFlag,
-    output reg        testFlag,
     output reg        CCout,
 
     // ✅ 追加
@@ -108,7 +106,6 @@ module decoderWithCc (
             // --- リセット時の初期化 ---
             carryFlag <= 1'b0;
             zeroFlag  <= 1'b0;
-            cplFlag   <= 1'b0;
 
             aluEnable <= 1'b0;
             aluOp     <= 4'h0;
@@ -140,9 +137,6 @@ module decoderWithCc (
             pairWe   <= 1'b0;
             pairAddr <= 4'd0;
             pairDin  <= 8'd0;
-
-            // TESTピンは常時フラグに反映
-            testFlag <= testIn;
 
             // 全命令共通：X1 (cycle=5) で temp←ACC
             if (cycle == 3'd5) begin

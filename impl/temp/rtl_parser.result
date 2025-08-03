@@ -17,7 +17,7 @@
   "SubInsts" : [
    {
     "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
-    "InstLine" : 40,
+    "InstLine" : 39,
     "InstName" : "u_clkDiv1Hz",
     "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/clkDiv.v",
     "ModuleLine" : 1,
@@ -25,7 +25,7 @@
    },
    {
     "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
-    "InstLine" : 47,
+    "InstLine" : 46,
     "InstName" : "u_clkDiv10Hz",
     "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/clkDiv.v",
     "ModuleLine" : 1,
@@ -33,7 +33,7 @@
    },
    {
     "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
-    "InstLine" : 55,
+    "InstLine" : 54,
     "InstName" : "u_toggle1Hz",
     "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/toggle.v",
     "ModuleLine" : 1,
@@ -41,7 +41,7 @@
    },
    {
     "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
-    "InstLine" : 62,
+    "InstLine" : 61,
     "InstName" : "u_toggle10Hz",
     "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/toggle.v",
     "ModuleLine" : 1,
@@ -49,7 +49,7 @@
    },
    {
     "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
-    "InstLine" : 74,
+    "InstLine" : 73,
     "InstName" : "uDebounce",
     "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/debounce.v",
     "ModuleLine" : 1,
@@ -67,7 +67,7 @@
    },
    {
     "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
-    "InstLine" : 107,
+    "InstLine" : 105,
     "InstName" : "uCpu",
     "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTop.v",
     "ModuleLine" : 1,
@@ -75,7 +75,7 @@
     "SubInsts" : [
      {
       "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTop.v",
-      "InstLine" : 66,
+      "InstLine" : 64,
       "InstName" : "uClockReset",
       "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/clockReset.v",
       "ModuleLine" : 1,
@@ -83,7 +83,7 @@
      },
      {
       "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTop.v",
-      "InstLine" : 74,
+      "InstLine" : 72,
       "InstName" : "uPc",
       "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/pc.v",
       "ModuleLine" : 1,
@@ -91,7 +91,7 @@
      },
      {
       "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTop.v",
-      "InstLine" : 87,
+      "InstLine" : 85,
       "InstName" : "uRom",
       "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/rom.v",
       "ModuleLine" : 1,
@@ -99,7 +99,7 @@
      },
      {
       "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTop.v",
-      "InstLine" : 94,
+      "InstLine" : 92,
       "InstName" : "uDecoder",
       "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/decoderWithCc.v",
       "ModuleLine" : 1,
@@ -107,7 +107,7 @@
      },
      {
       "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTop.v",
-      "InstLine" : 127,
+      "InstLine" : 123,
       "InstName" : "uAccTemp",
       "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/accTempRegs.v",
       "ModuleLine" : 1,
@@ -115,7 +115,7 @@
      },
      {
       "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTop.v",
-      "InstLine" : 139,
+      "InstLine" : 135,
       "InstName" : "uAlu",
       "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/alu.v",
       "ModuleLine" : 4,
@@ -123,7 +123,7 @@
      },
      {
       "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTop.v",
-      "InstLine" : 156,
+      "InstLine" : 152,
       "InstName" : "uRegisters",
       "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/registerFile.v",
       "ModuleLine" : 1,
@@ -131,7 +131,7 @@
      },
      {
       "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTop.v",
-      "InstLine" : 177,
+      "InstLine" : 173,
       "InstName" : "uStack",
       "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/stack.v",
       "ModuleLine" : 1,
@@ -141,7 +141,15 @@
    },
    {
     "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
-    "InstLine" : 134,
+    "InstLine" : 116,
+    "InstName" : "uclockReset",
+    "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/clockReset.v",
+    "ModuleLine" : 1,
+    "ModuleName" : "clockReset"
+   },
+   {
+    "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
+    "InstLine" : 141,
     "InstName" : "uDrvA",
     "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/drv7seg.v",
     "ModuleLine" : 1,
@@ -149,7 +157,7 @@
    },
    {
     "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
-    "InstLine" : 135,
+    "InstLine" : 142,
     "InstName" : "uDrvB",
     "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/drv7seg.v",
     "ModuleLine" : 1,
@@ -157,7 +165,7 @@
    },
    {
     "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
-    "InstLine" : 136,
+    "InstLine" : 143,
     "InstName" : "uDrvC",
     "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/drv7seg.v",
     "ModuleLine" : 1,
@@ -165,7 +173,7 @@
    },
    {
     "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
-    "InstLine" : 137,
+    "InstLine" : 144,
     "InstName" : "uDrvD",
     "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/drv7seg.v",
     "ModuleLine" : 1,
@@ -173,7 +181,7 @@
    },
    {
     "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTopWith7seg.v",
-    "InstLine" : 139,
+    "InstLine" : 146,
     "InstName" : "uMux",
     "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/mux7seg.v",
     "ModuleLine" : 1,
