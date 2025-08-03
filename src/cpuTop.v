@@ -20,6 +20,13 @@ module cpuTop (
     // ROM関連
     wire [3:0] romData;   // 4bit (M1=OPR, M2=OPA)
 
+    // RAM関連
+    wire [3:0] ramDataOut;
+    wire       ramWe, ramRe;
+    reg  [3:0] bankSel;
+    wire [11:0] ramAddr;
+    wire [3:0]  ramDin;
+
     // decoder関連
     wire aluEnable;
     wire [3:0] aluOp;
@@ -89,6 +96,32 @@ module cpuTop (
         .nibble(romData)
     );
 
+    // RAM本体
+    ram uRam (
+        .clk(clk),
+        .rstN(rstN),
+        .ramWe(ramWe),
+        .ramRe(ramRe),
+        .addr(ramAddr),
+        .dataIn(ramDin),
+        .dataOut(ramDataOut)
+    );
+
+
+    // ACC → RAMへ直結
+    always @(posedge clk or negedge rstN) begin
+        if (!rstN) begin
+            bankSel <= 4'b0000;
+        end else if (bankSelWe) begin
+            bankSel <= bankSelData;
+        end
+    end
+
+    assign ramDin = accOut;
+    assign ramAddr = { bankSel, pairDout };   // 上位4bitがバンク、下位8bitがレジスタペアの値
+    assign ramRe = 1'b0;   // WRMだけなら読み出し不要
+
+
 
     // decoder（CC統合）
     decoderWithCc uDecoder (
@@ -107,6 +140,11 @@ module cpuTop (
         .accWe(accWe),
         .tempWe(tempWe),
         .regWe(regWe),
+        .ramWe(ramWe),
+        .ramRe(ramRe),
+        .romRe(romRe),
+        .ioWe(ioWe),
+        .ioRe(ioRe),
 
         .carryFlag(carryFlag),
         .zeroFlag(zeroFlag),
@@ -118,7 +156,10 @@ module cpuTop (
         // ✅ ペアレジスタ関連信号
         .pairWe(pairWe),
         .pairAddr(pairAddr),
-        .pairDin(pairDin)
+        .pairDin(pairDin),
+
+        .bankSelWe(bankSelWe),
+        .bankSelData(bankSelData)
     );
 
     // ACC & Temp

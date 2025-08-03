@@ -18,6 +18,12 @@ module decoderWithCc (
     output reg        tempWe,
     output reg        regWe,        // ✅ RegisterFile書き込み信号を追加
 
+    output reg        ramWe,
+    output reg        ramRe,
+    output reg        romRe,
+    output reg        ioWe,
+    output reg        ioRe,
+
     // CCフラグ
     output reg        carryFlag,
     output reg        zeroFlag,
@@ -28,7 +34,11 @@ module decoderWithCc (
     output reg        regSrcSel,
     output reg        pairWe,
     output reg [3:0]  pairAddr,
-    output reg [7:0]  pairDin
+    output reg [7:0]  pairDin,
+
+    output reg        bankSelWe,
+    output reg [3:0]  bankSelData
+
 );
 
     // ===============================
@@ -114,8 +124,16 @@ module decoderWithCc (
             accWe     <= 1'b0;
             tempWe    <= 1'b0;
             regWe     <= 1'b0;
+            ramWe     <= 1'b0;       // ✅ リセット時に初期化
+            ramRe     <= 1'b0;
+            romRe     <= 1'b0;
+            ioWe      <= 1'b0;
+            ioRe      <= 1'b0;
+
             decoderUseImm <= 1'b0;   // ✅ リセット時も初期化
             regSrcSel     <= 1'b0;   // ✅ ← 追加！
+            bankSelWe <= 1'b0;
+            bankSelData <= 4'd0;
 
             pairWe   <= 1'b0;
             pairAddr <= 4'd0;
@@ -130,8 +148,16 @@ module decoderWithCc (
             accWe     <= 1'b0;
             tempWe    <= 1'b0;
             regWe     <= 1'b0;
+            ramWe     <= 1'b0;       // ✅ リセット時に初期化
+            ramRe     <= 1'b0;
+            romRe     <= 1'b0;
+            ioWe      <= 1'b0;
+            ioRe      <= 1'b0;
+
             decoderUseImm <= 1'b0;   // 
             regSrcSel     <= 1'b0;   // ✅ ← 追加！
+            bankSelWe <= 1'b0;
+            bankSelData <= 4'd0;
 
             // 毎サイクル初期化
             pairWe   <= 1'b0;
@@ -240,6 +266,84 @@ module decoderWithCc (
                 end
 
                 // ===========================
+                // E_（I/O命令など）
+                // ===========================
+                E_: begin
+                    case (opa)
+
+                        // ========= RAM 書き込み =========
+                        WRM: if (cycle == 3'd7) ramWe <= 1'b1;
+                        WR0, WR1, WR2, WR3: if (cycle == 3'd7) ramWe <= 1'b1;
+
+                        // ========= I/O/ROM 書き込み =========
+                        WMP, WRR : if (cycle == 3'd7) ioWe <= 1'b1;
+
+                        // =========  書き込み/読み込み　4008/4009, 4289 =========
+                        WPM: ramRe <= ramRe;    // 実質NOP
+                        // ========= RAM 読み出し =========
+                        SBM: begin
+                            if (cycle == 3'd7) begin
+                                ramRe  <= 1'b1;
+                                aluEnable <= 1'b1;
+                                aluOp     <= SUB;
+                                accWe     <= 1'b1;
+                                carryFlag <= carryFromAlu;
+                                zeroFlag  <= zeroFromAlu;
+                            end
+                        end
+
+                        RDM: begin
+                            if (cycle == 3'd7) begin
+                                ramRe  <= 1'b1;
+                                accWe  <= 1'b1;
+                            end
+                        end
+
+                        ADM: begin
+                            if (cycle == 3'd7) begin
+                                ramRe  <= 1'b1;
+                                aluEnable <= 1'b1;
+                                aluOp     <= ADD;
+                                accWe     <= 1'b1;
+                                carryFlag <= carryFromAlu;
+                                zeroFlag  <= zeroFromAlu;
+                            end
+                        end
+
+                        RD0, RD1, RD2, RD3: begin
+                            if (cycle == 3'd7) begin
+                                ramRe  <= 1'b1;
+                                accWe  <= 1'b1;
+                            end
+                        end
+
+                        // ========= ROM 読み出し =========
+                        RDR: begin
+                            if (cycle == 3'd7) begin
+                                ioRe  <= 1'b1;   // ✅ ioRe ではなく romRe に変更
+                                accWe <= 1'b1;
+                            end
+                        end
+
+                        default: begin
+                            // 未定義命令は何もしない
+                        end
+
+                    endcase
+                end
+                E_: begin
+                    case (opa)
+                        WRM: begin
+                            if (cycle == 3'd7) begin
+                                ramWe  <= 1'b1;
+                                // ramAddr, ramDin は cpuTop 側で常時接続
+                            end
+                        end
+                        // 他の E系命令はあとで
+                    endcase
+                end
+
+                // ===========================
                 // F_（キャリー操作命令など）
                 // ===========================
                 F_: begin
@@ -312,7 +416,10 @@ module decoderWithCc (
                             end
 
                             4'hD: begin // DCL
-                                // TODO: メモリバンクセレクト信号を後で追加
+                                if (cycle == 3'd7) begin
+                                    bankSelData <= accOut;   // ACCの値をそのままバンク番号に
+                                    bankSelWe   <= 1'b1;
+                                end
                             end
 
                             default: begin

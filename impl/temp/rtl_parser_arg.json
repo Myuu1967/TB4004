@@ -54,10 +54,6 @@
    "Type" : "verilog"
   },
   {
-   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/ram.v.v",
-   "Type" : "verilog"
-  },
-  {
    "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/registerFile.v",
    "Type" : "verilog"
   },
@@ -71,6 +67,10 @@
   },
   {
    "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/toggle.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/ram.v",
    "Type" : "verilog"
   }
  ],
