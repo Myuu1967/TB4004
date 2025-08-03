@@ -24,6 +24,7 @@ module cpuTop (
     // decoder関連
     wire aluEnable;
     wire [3:0] aluOp;
+    wire [3:0] aluSubOp;   // ✅ 新規追加
     wire accWe;
     wire tempWe;
 
@@ -41,6 +42,10 @@ module cpuTop (
 
     // Register File
     wire [3:0] regDout;
+    wire       pairWe;
+    wire [3:0] pairAddr;
+    wire [7:0] pairDin;
+    wire [7:0] pairDout;
 
     // ======== 仮追加 ========
     // decoderから将来出す信号
@@ -98,6 +103,7 @@ module cpuTop (
 
         .aluEnable(aluEnable),
         .aluOp(aluOp),
+        .aluSubOp(aluSubOp),   // ✅ 追加
         .accWe(accWe),
         .tempWe(tempWe),
         .regWe(regWe),
@@ -110,7 +116,10 @@ module cpuTop (
 
         // ✅ decoderUseImm 信号を追加
         .decoderUseImm(decoderUseImm)
-
+        // ✅ ペアレジスタ関連信号
+        .pairWe(pairWe),
+        .pairAddr(pairAddr),
+        .pairDin(pairDin)
     );
 
     // ACC & Temp
@@ -128,6 +137,7 @@ module cpuTop (
     // ALU
     alu uAlu (
         .aluOp(aluOp),
+        .aluSubOp(aluSubOp),   // ✅ 追加
         .accIn(accOut),        // ✅ accOutWire→accOut に修正
         .tempIn(tempOut),
         .opa(aluOpaSrc),
@@ -141,10 +151,20 @@ module cpuTop (
     registerFile uRegisters (
         .clk(clk),
         .rstN(rstN),
-        .regWe(regWe),      // 改造 OPAに即値も使えるようにする
-        .regAddr(4'h0),
-        .regDin(4'h0),
-        .regDout(regDout)
+
+        // 単独レジスタ書き込み
+        .regWe(regWe),
+        .regAddr(opaNibble),   // OPA nibble がレジスタ番号
+        .regDin(accOut),       // XCHなどでACC→reg書き込み
+
+        // ペア書き込み（FIM命令などで使用）
+        .pairWe(pairWe),           // decoder から受け取る
+        .pairAddr(pairAddr),       // decoder から受け取る
+        .pairDin(pairDin),         // decoder から受け取る
+
+        // 読み出し
+        .regDout(regDout),
+        .pairDout(pairDout)
     );
 
     // Stack（未完全）

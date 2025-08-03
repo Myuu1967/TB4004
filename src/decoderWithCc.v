@@ -11,11 +11,12 @@ module decoderWithCc (
     // ALU制御信号
     output reg        aluEnable,
     output reg  [3:0] aluOp,
+    output reg  [3:0] aluSubOp,
 
     // レジスタ制御信号
     output reg        accWe,
     output reg        tempWe,
-    output reg        regWe,
+    output reg        regWe,        // ✅ RegisterFile書き込み信号を追加
 
     // CCフラグ
     output reg        carryFlag,
@@ -25,34 +26,23 @@ module decoderWithCc (
     output reg        CCout,
 
     // ✅ 追加
-    output reg  decoderUseImm
+    output reg        decoderUseImm,
+    output reg        pairWe,
+    output reg [3:0]  pairAddr,
+    output reg [7:0]  pairDin
 );
 
-    // ALU操作コード定義（完全版）
+    // ======== ALU操作コード定義 ========
     localparam NOP = 4'h0;
-    localparam JCN = 4'h1;          //  2Byte Command
-
-    localparam H2  = 4'h2;
-    localparam FIM = 1'b0;          //  2Byte Command
-    localparam SRC = 1'b1;
-
-    localparam H3  = 4'h3;
-    localparam FIN = 1'b0;            
-    localparam JIN = 1'b1;            
-
-    localparam JUN = 4'h4;         //  2Byte Command
-    localparam JMS = 4'h5;         //  2Byte Command
     localparam INC = 4'h6;
-    localparam ISZ = 4'h7;         //  2Byte Command 
     localparam ADD = 4'h8;
     localparam SUB = 4'h9;
     localparam LD  = 4'hA;
     localparam XCH = 4'hB;
-    localparam BBL = 4'hC;
     localparam LDM = 4'hD;
-
     localparam F_  = 4'hF;
 
+    // （F_ 系命令のサブコード）
     localparam CLB = 4'h0;
     localparam CLC = 4'h1;
     localparam IAC = 4'h2;
@@ -67,72 +57,86 @@ module decoderWithCc (
     localparam KBP = 4'hC;
     localparam DCL = 4'hD;
 
-    localparam E_  = 4'hE;
+    // （E_ 系命令もあとで追加）
 
-    localparam WRM = 4'h0;
-    localparam WMP = 4'h1;
-    localparam WRR = 4'h2;
-    localparam WPM = 4'h3;
-    localparam WR0 = 4'h4;
-    localparam WR1 = 4'h5;
-    localparam WR2 = 4'h6;
-    localparam WR3 = 4'h7;
-
-    localparam SBM = 4'h8;
-    localparam RDM = 4'h9;
-    localparam RDR = 4'hA;
-    localparam ADM = 4'hB;
-    localparam RD0 = 4'hC;
-    localparam RD1 = 4'hD;
-    localparam RD2 = 4'hE;
-    localparam RD3 = 4'hF;
-
+    // ======== CC出力ロジック ========
     always @(*) begin
-        CCout = 1'b0; // デフォルト
         CCout = (~testFlag & opa[0]) | (carryFlag & opa[1]) | (zeroFlag & opa[2]);
         if (opa[3]) begin
             CCout = ~CCout;
         end
     end
 
-    // 命令デコード処理
+    // ======== 命令デコード ========
     always @(posedge clk or negedge rstN) begin
         if (!rstN) begin
+            // --- リセット時の初期化 ---
             carryFlag <= 1'b0;
             zeroFlag  <= 1'b0;
             cplFlag   <= 1'b0;
 
             aluEnable <= 1'b0;
             aluOp     <= 4'h0;
+            aluSubOp  <= 4'h0;
 
             accWe     <= 1'b0;
             tempWe    <= 1'b0;
-            regWe     <= 1'b0;    // ✅ これも毎サイクル初期化
+            regWe     <= 1'b0;
+            decoderUseImm <= 1'b0;   // ✅ リセット時も初期化
+
+            pairWe   <= 1'b0;
+            pairAddr <= 4'd0;
+            pairDin  <= 8'd0;
 
         end else begin
-            // testFlagは常時外部ピンの値を反映
-            testFlag <= testIn;
-
-            // デフォルト値（命令により上書き）
+            // --- デフォルト値（毎クロック初期化） ---
             aluEnable <= 1'b0;
             aluOp     <= 4'h0;
+            aluSubOp  <= 4'h0;
+
             accWe     <= 1'b0;
             tempWe    <= 1'b0;
-            regWe     <= 1'b0;    // ✅ これも毎サイクル初期化
+            regWe     <= 1'b0;
+            decoderUseImm <= 1'b0;   // ✅ リセット時も初期化
+
+            // 毎サイクル初期化
+            pairWe   <= 1'b0;
+            pairAddr <= 4'd0;
+            pairDin  <= 8'd0;
+
+            // TESTピンは常時フラグに反映
+            testFlag <= testIn;
 
             // 全命令共通：X1 (cycle=5) で temp←ACC
             if (cycle == 3'd5) begin
                 tempWe <= 1'b1;
             end
+
             case (opr)
-                4'h0: begin 
-                    // NOP（何もしない）
+                // FIM命令（将来用）
+                4'h2: begin
+                    if (opa[0] == 1'b0) begin // FIM（RRR0）
+                        if (cycle == 3'd7) begin
+                            pairWe   <= 1'b1;
+                            pairAddr <= {opa[3:1],1'b0};   // 偶数レジスタ
+                        //    pairDin  <= 8'h??;             // TODO: ROMのD2D1 nibbleを結合
+                        end
+                    end
                 end
 
-                // ADD
-                4'h8: begin
+                INC: begin
+                    aluEnable <= 1'b1;   // X2 から ALU計算は常時動く
+                    aluOp     <= INC;
+                    if (cycle == 3'd7) begin  // ✅ X3 サイクルで書き込み
+                        regWe     <= 1'b1; 
+                        carryFlag <= carryFromAlu;
+                        zeroFlag  <= zeroFromAlu;
+                    end
+                end
+
+                ADD: begin
                     aluEnable <= 1'b1;
-                    aluOp     <= 4'h8;
+                    aluOp     <= ADD;
                     if (cycle == 3'd7) begin
                         accWe     <= 1'b1;
                         carryFlag <= carryFromAlu;
@@ -140,10 +144,12 @@ module decoderWithCc (
                     end
                 end
 
-                // SUB
-                4'h9: begin
+                // ===========================
+                // SUB（ACC = ACC - reg - borrow）
+                // ===========================
+                SUB: begin
                     aluEnable <= 1'b1;
-                    aluOp     <= 4'h9;
+                    aluOp     <= SUB;
                     if (cycle == 3'd7) begin
                         accWe     <= 1'b1;
                         carryFlag <= carryFromAlu;
@@ -151,62 +157,143 @@ module decoderWithCc (
                     end
                 end
 
-                // LD
-                4'hA: begin
+                // ===========================
+                // LD（ACC ← reg）
+                // ===========================
+                LD: begin
                     aluEnable <= 1'b1;
-                    aluOp     <= 4'hA;
+                    aluOp     <= LD;
                     if (cycle == 3'd7) begin
                         accWe     <= 1'b1;
                         zeroFlag  <= zeroFromAlu;
-                        // carryFlagは変更しない
+                        // carryFlag は変更しない
                     end
                 end
 
+                // ===========================
                 // XCH（ACCとレジスタの交換）
-                4'hB: begin
+                // ===========================
+                XCH: begin
                     if (cycle == 3'd7) begin
                         accWe   <= 1'b1;    // ACCにも書く
                         regWe   <= 1'b1;    // RegisterFileにも書く
                     end
                 end
 
-                // LDM (ACCに即値ロード)
-                4'hD: begin
+                // ===========================
+                // BBL（RET命令）
+                // ===========================
+                BBL: begin
+                    decoderUseImm <= 1'b1;   // ✅ BBLでも即値を使う
                     aluEnable <= 1'b1;
-                    aluOp     <= 4'hD;  // ALUにLDM指定
+                    aluOp     <= BBL;
                     if (cycle == 3'd7) begin
-                        accWe     <= 1'b1;       // ACCに書き込む
-                        zeroFlag  <= zeroFromAlu; // Zeroフラグ更新
+                        accWe    <= 1'b1;
+                        // stack からPCを戻す処理も必要だが後で追加
+                    end
+                end
+
+                // ===========================
+                // LDM（ACCに即値ロード）
+                // ===========================
+                LDM: begin
+                    aluEnable <= 1'b1;
+                    aluOp     <= LDM;  // ALU経由で即値をACCに書き込む
+                    decoderUseImm <= 1'b1;    // ✅ ここに含める！
+                    if (cycle == 3'd7) begin
+                        accWe     <= 1'b1;
+                        zeroFlag  <= zeroFromAlu;
                         // carryFlag は変更しない
                     end
                 end
 
-                4'hF : begin // CC系 (CLC, STC, CMC)
-                    if (opa == CLC && cycle == 3'd7) begin
-                        carryFlag <= 1'b0; // CLC (Carry Clear)
-                    end
-                    if (opa == CMC && cycle == 3'd7) begin
-                        carryFlag <= ~carryFlag; // CMC (Carry Complement)
-                    end
-                    if (opa == STC && cycle == 3'd7) begin
-                        carryFlag <= 1'b1; // STC (Carry Set)
+                // ===========================
+                // F_（キャリー操作命令など）
+                // ===========================
+                F_: begin
+                    aluEnable <= 1'b1;      // ALUを動かす
+                    aluOp     <= F_;        // 大分類はF_
+                    aluSubOp  <= opa;       // 下位4bitをALUに渡す（CLB/CLC/IAC…）
+
+                    if (cycle == 3'd7) begin
+                        case (opa)
+                            4'h0: begin // CLB
+                                accWe     <= 1'b1;
+                                carryFlag <= 1'b0;
+                            end
+
+                            4'h1: begin // CLC
+                                carryFlag <= 1'b0;
+                            end
+
+                            4'h2: begin // IAC
+                                accWe     <= 1'b1;
+                                carryFlag <= carryFromAlu;
+                                zeroFlag  <= zeroFromAlu;
+                            end
+
+                            4'h3: begin // CMC
+                                carryFlag <= ~carryFlag;
+                            end
+
+                            4'h4: begin // CMA
+                                accWe     <= 1'b1;
+                            end
+
+                            4'h5: begin // RAL
+                                accWe     <= 1'b1;
+                                carryFlag <= carryFromAlu;
+                            end
+
+                            4'h6: begin // RAR
+                                accWe     <= 1'b1;
+                                carryFlag <= carryFromAlu;
+                            end
+
+                            4'h7: begin // TCC
+                                accWe     <= 1'b1;
+                                carryFlag <= 1'b0;
+                            end
+
+                            4'h8: begin // DAC
+                                accWe     <= 1'b1;
+                                carryFlag <= carryFromAlu;
+                                zeroFlag  <= zeroFromAlu;
+                            end
+
+                            4'h9: begin // TCS
+                                accWe     <= 1'b1;
+                                carryFlag <= 1'b0;
+                            end
+
+                            4'hA: begin // STC
+                                carryFlag <= 1'b1;
+                            end
+
+                            4'hB: begin // DAA
+                                accWe     <= 1'b1;
+                                carryFlag <= carryFromAlu; // BCD補正でcarry更新される可能性あり
+                            end
+
+                            4'hC: begin // KBP
+                                accWe     <= 1'b1;
+                            end
+
+                            4'hD: begin // DCL
+                                // TODO: メモリバンクセレクト信号を後で追加
+                            end
+
+                            default: begin
+                                // 4'hE, 4'hFは未定義 or 予約
+                            end
+                        endcase
                     end
                 end
-
                 default: begin
-                    // 未定義命令 → 何もしない
+                    // 何もしない（NOP扱い）
                 end
             endcase
         end
     end
 
-    always @(*) begin
-        decoderUseImm = 1'b0;   // デフォルトは 0（即値ではない）
-        case (opr)
-            4'b1101: decoderUseImm = 1'b1;  // ✅ LDM のとき即値を使う
-            // 必要に応じて LD A, #imm みたいな命令でも追加
-            default: decoderUseImm = 1'b0;
-        endcase
-    end
-
-endmodule  // decoderWithCc
+endmodule
