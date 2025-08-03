@@ -3,7 +3,7 @@ module cpuTopWith7seg (
     input  wire clkBtn,        // 手動クロックボタン
     input  wire [1:0] clkSel,  // クロック切替スイッチ
     input  wire extRstBtn,     // 🔵 外部リセットボタン（Lowでリセット）
-//    input  wire testIn,        // TESTピン（in[0]など割り当て可）
+    input  wire testIn,        // TESTピン（in[0]など割り当て可）
 
     // 7セグLED出力
     output wire [7:0] seg,

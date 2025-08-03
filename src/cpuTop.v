@@ -6,7 +6,7 @@ module cpuTop (
     // デバッグ用
     output wire [11:0] pcAddr,
     output wire [3:0]  accDebug,
-    output wire        cycleOut
+    output wire [2:0]  cycleOut
 );
 
     // ======== 内部配線 ========
@@ -114,8 +114,9 @@ module cpuTop (
         .testFlag(testFlag),
         .CCout(CCout),
 
-        // ✅ decoderUseImm 信号を追加
-        .decoderUseImm(decoderUseImm)
+        // ✅ decoderUseImm, regSrcSel 信号を追加
+        .decoderUseImm(decoderUseImm),
+        .regSrcSel(regSrcSel),
         // ✅ ペアレジスタ関連信号
         .pairWe(pairWe),
         .pairAddr(pairAddr),
@@ -147,6 +148,10 @@ module cpuTop (
         .zeroOut(zeroOut)
     );
 
+    // 書き込みデータをmux
+    wire [3:0] regDinMux;
+    assign regDinMux = (regSrcSel) ? tempOut : accOut;
+
     // Register File（仮）
     registerFile uRegisters (
         .clk(clk),
@@ -155,7 +160,8 @@ module cpuTop (
         // 単独レジスタ書き込み
         .regWe(regWe),
         .regAddr(opaNibble),   // OPA nibble がレジスタ番号
-        .regDin(accOut),       // XCHなどでACC→reg書き込み
+        .regDin(regDinMux),    // ✅ mux経由で書き込み
+        // .regDin(accOut),       // XCHなどでACC→reg書き込み
 
         // ペア書き込み（FIM命令などで使用）
         .pairWe(pairWe),           // decoder から受け取る
