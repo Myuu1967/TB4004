@@ -1,6 +1,7 @@
 module cpuTop (
     input  wire clk,         // toggle.v からのクロック
     input  wire rstN,        // リセット
+    input  wire testFlag,      // 外部から入力
 
     // デバッグ用
     output wire [11:0] pcAddr,
@@ -87,6 +88,7 @@ module cpuTop (
         .cycle(cycle),
         .nibble(romData)
     );
+
 
     // decoder（CC統合）
     decoderWithCc uDecoder (

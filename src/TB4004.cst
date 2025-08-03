@@ -5,7 +5,7 @@
 //Part Number: GW1N-UV4LQ144C6/I5
 //Device: GW1N-4
 //Device Version: B
-//Created Time: Sat 08 02 17:32:37 2025
+//Created Time: Sun 08 03 14:58:42 2025
 
 IO_LOC "led[7]" 30;
 IO_PORT "led[7]" PULL_MODE=NONE DRIVE=8 BANK_VCCIO=1.8;
@@ -47,6 +47,8 @@ IO_LOC "seg[1]" 142;
 IO_PORT "seg[1]" PULL_MODE=NONE DRIVE=8 BANK_VCCIO=1.8;
 IO_LOC "seg[0]" 138;
 IO_PORT "seg[0]" PULL_MODE=NONE DRIVE=8 BANK_VCCIO=1.8;
+IO_LOC "testIn" 61;
+IO_PORT "testIn" PULL_MODE=UP BANK_VCCIO=1.8;
 IO_LOC "extRstBtn" 58;
 IO_PORT "extRstBtn" PULL_MODE=UP BANK_VCCIO=1.8;
 IO_LOC "clkSel[1]" 75;

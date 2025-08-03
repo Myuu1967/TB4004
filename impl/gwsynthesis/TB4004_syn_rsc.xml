@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Module name="cpuTopWith7seg" Register="18" Alu="15" Lut="19">
-    <SubModule name="u_clkDiv1Hz" Register="23" Lut="42"/>
+    <SubModule name="u_clkDiv1Hz" Register="23" Lut="46"/>
     <SubModule name="u_clkDiv10Hz" Register="20" Lut="36"/>
     <SubModule name="u_toggle1Hz" Register="2" Lut="7"/>
     <SubModule name="u_toggle10Hz" Register="2" Lut="7"/>
@@ -9,7 +9,7 @@
     </SubModule>
     <SubModule name="uCpu">
         <SubModule name="uClockReset" Register="3"/>
-        <SubModule name="uPc" Register="12" Alu="11" Lut="1"/>
+        <SubModule name="uPc" Register="12" Alu="11" Lut="2"/>
     </SubModule>
     <SubModule name="uclockReset" Lut="3"/>
     <SubModule name="uMux" Register="3" Lut="55">

@@ -3,6 +3,7 @@ module cpuTopWith7seg (
     input  wire clkBtn,        // 手動クロックボタン
     input  wire [1:0] clkSel,  // クロック切替スイッチ
     input  wire extRstBtn,     // 🔵 外部リセットボタン（Lowでリセット）
+    input  wire testIn, 
 
     // 7セグLED出力
     output wire [7:0] seg,
@@ -100,11 +101,11 @@ module cpuTopWith7seg (
     // ========= CPUコア =========
     wire [11:0] pcAddr;
     wire [3:0]  accDebug;
-    wire [2:0]  cycleOut;
 
     cpuTop uCpu (
         .clk(cpuClk),
         .rstN(rstN),        // ✅ 自動＋外部リセット併用
+        .testFlag(testIn),
         .pcAddr(pcAddr),
         .accDebug(accDebug)
     );
@@ -133,7 +134,9 @@ module cpuTopWith7seg (
             3'd7: led = 8'b10000000; // LED30
             default: led = 8'b00000000;
         endcase
+        if(!testIn) begin led = 8'b11111111; end
     end
+
 
     // ========= 7セグ変換 =========
     wire [7:0] segA, segB, segC, segD;
