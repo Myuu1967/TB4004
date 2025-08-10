@@ -1,0 +1,319 @@
+===== モジュール階層（推定） =====
+cpuTop (cpuTop.v)
+├─ uMc: cpuMicrocycle
+├─ uPc: pc
+├─ uRom: rom
+├─ uRegisters: registerFile
+├─ uStack: stack
+├─ uAccTemp: accTempRegs
+└─ uAlu: alu
+
+cpuTopWith7seg (cpuTopWith7seg.v)
+├─ u_clkDiv10Hz: clkDiv
+├─ u_toggle1Hz: toggle
+├─ u_toggle10Hz: toggle
+├─ uDebounce: debounce
+│ debounce (debounce.v)
+│ └─ clkDivInst: clkDiv
+├─ uclockReset: clockReset
+├─ uDrvB: drv7seg
+├─ uDrvC: drv7seg
+├─ uDrvD: drv7seg
+└─ uMux: mux7seg
+  mux7seg (mux7seg.v)
+  └─ uClkDiv: clkDiv
+
+decoderWithCc (decoderWithCc.v)
+
+io (io.v)
+
+ram (ram.v)
+
+===== モジュール間データフロー（親→子のインスタンス単位） =====
+
+[cpuTop -> accTempRegs]  インスタンス: uAccTemp
+  親ファイル: cpuTop.v
+  子ファイル: accTempRegs.v
+  不明な向き（宣言未検出）:
+    .clk <-> clk
+    .rstN <-> rstN
+    .aluResult <-> 
+    .accOutForTemp <-> accOut
+    .accWe <-> accWe
+    .tempWe <-> tempWe
+    .accOut <-> accOut
+    .tempOut <-> tempOut
+
+[cpuTop -> alu]  インスタンス: uAlu
+  親ファイル: cpuTop.v
+  子ファイル: alu.v
+  不明な向き（宣言未検出）:
+    .aluOp <-> aluOp
+    .aluSubOp <-> aluSubOp
+    .accIn <-> accOut
+    .tempIn <-> tempOut
+    .opa <-> aluOpaSrc
+    .carryIn <-> carryFlag
+    .aluResult <-> aluResult
+    .carryOut <-> carryOut
+    .zeroOut <-> zeroOut
+
+[cpuTop -> cpuMicrocycle]  インスタンス: uMc
+  親ファイル: cpuTop.v
+  子ファイル: cpuMicrocycle.v
+  不明な向き（宣言未検出）:
+    .clk <-> clk
+    .rstN <-> rstN
+    .needImm <-> needImm
+    .immFetchActive <-> immFetchActive
+    .cycle <-> cycle
+    .a1 <-> a1
+    .a2 <-> a2
+    .a3 <-> a3
+    .m1 <-> m1
+    .m2 <-> m2
+    .x1 <-> x1
+    .x2 <-> x2
+    .x3 <-> x3
+    .pcIncPulse <-> pcIncPulse
+    .commitPulse <-> commitPulse
+    .irOprLatch <-> irOprLatch
+    .irOpaLatch <-> irOpaLatch
+    .immA2Latch <-> immA2Latch
+    .immA1Latch <-> immA1Latch
+
+[cpuTop -> pc]  インスタンス: uPc
+  親ファイル: cpuTop.v
+  子ファイル: pc.v
+  不明な向き（宣言未検出）:
+    .clk <-> clk
+    .rstN <-> rstN
+    .inc <-> pcIncPulse
+    .load <-> pcLoad
+    .loadData <-> pcLoadData
+    .pcLow <-> pcLow
+    .pcMid <-> pcMid
+    .pcHigh <-> pcHigh
+
+[cpuTop -> registerFile]  インスタンス: uRegisters
+  親ファイル: cpuTop.v
+  子ファイル: registerFile.v
+  不明な向き（宣言未検出）:
+    .clk <-> clk
+    .rstN <-> rstN
+    .regWe <-> regWe
+    .regAddr <-> regAddr
+    .regDin <-> regDinMux
+    .pairWe <-> pairWe
+    .pairAddr <-> pairAddr
+    .pairDin <-> pairDin
+    .regDout <-> regDout
+    .pairDout <-> pairDout
+
+[cpuTop -> rom]  インスタンス: uRom
+  親ファイル: cpuTop.v
+  子ファイル: rom.v
+  不明な向き（宣言未検出）:
+    .clk <-> clk
+    .addr <-> pcAddr
+    .cycle <-> cycle
+    .nibble <-> romData
+
+[cpuTop -> stack]  インスタンス: uStack
+  親ファイル: cpuTop.v
+  子ファイル: stack.v
+  不明な向き（宣言未検出）:
+    .clk <-> clk
+    .rstN <-> rstN
+    .push <-> stackPush
+    .pop <-> stackPop
+    .pcIn <-> pcAddr
+    .pcOut <-> stackPcOut
+    .sp <-> sp
+    .overflow <-> stackOverflow
+    .underflow <-> stackUnderflow
+
+[cpuTopWith7seg -> debounce]  インスタンス: uDebounce
+  親ファイル: cpuTopWith7seg.v
+  子ファイル: debounce.v
+  不明な向き（宣言未検出）:
+    .clk <-> clk
+    .rstN <-> rstN
+    .in <-> clkBtn
+    .out <-> clkBtnDebounced
+
+[cpuTopWith7seg -> drv7seg]  インスタンス: uDrvB
+  親ファイル: cpuTopWith7seg.v
+  子ファイル: drv7seg.v
+  不明な向き（宣言未検出）:
+    .in <-> pcAddr[7:4]
+    .dp <-> 1'b0
+    .seg <-> segB
+
+[cpuTopWith7seg -> drv7seg]  インスタンス: uDrvC
+  親ファイル: cpuTopWith7seg.v
+  子ファイル: drv7seg.v
+  不明な向き（宣言未検出）:
+    .in <-> pcAddr[3:0]
+    .dp <-> 1'b0
+    .seg <-> segC
+
+[cpuTopWith7seg -> drv7seg]  インスタンス: uDrvD
+  親ファイル: cpuTopWith7seg.v
+  子ファイル: drv7seg.v
+  不明な向き（宣言未検出）:
+    .in <-> accDebug
+    .dp <-> 1'b0
+    .seg <-> segD
+
+[cpuTopWith7seg -> mux7seg]  インスタンス: uMux
+  親ファイル: cpuTopWith7seg.v
+  子ファイル: mux7seg.v
+  不明な向き（宣言未検出）:
+    .clk <-> clk
+    .rstN <-> rstN
+    .segA <-> segA
+    .segB <-> segB
+    .segC <-> segC
+    .segD <-> segD
+    .seg <-> seg
+    .segDig <-> segDig
+
+[cpuTopWith7seg -> clkDiv]  インスタンス: u_clkDiv10Hz
+  親ファイル: cpuTopWith7seg.v
+  子ファイル: clkDiv.v
+  不明な向き（宣言未検出）:
+    .clk <-> clk
+    .rstN <-> rstN
+    .maxCount <-> MAX10HZ
+    .tc <-> pulse10Hz
+
+[cpuTopWith7seg -> toggle]  インスタンス: u_toggle10Hz
+  親ファイル: cpuTopWith7seg.v
+  子ファイル: toggle.v
+  不明な向き（宣言未検出）:
+    .clk <-> clk
+    .rstN <-> rstN
+    .in <-> pulse10Hz
+    .out <-> clk10Hz
+
+[cpuTopWith7seg -> toggle]  インスタンス: u_toggle1Hz
+  親ファイル: cpuTopWith7seg.v
+  子ファイル: toggle.v
+  不明な向き（宣言未検出）:
+    .clk <-> clk
+    .rstN <-> rstN
+    .in <-> pulse1Hz
+    .out <-> clk1Hz
+
+[cpuTopWith7seg -> clockReset]  インスタンス: uclockReset
+  親ファイル: cpuTopWith7seg.v
+  子ファイル: clockReset.v
+  不明な向き（宣言未検出）:
+    .toggleClk <-> cpuClk
+    .rstN <-> rstN
+    .cycle <-> cycle
+    .sync <-> sync
+
+[debounce -> clkDiv]  インスタンス: clkDivInst
+  親ファイル: debounce.v
+  子ファイル: clkDiv.v
+  不明な向き（宣言未検出）:
+    .clk <-> clk
+    .rstN <-> rstN
+    .maxCount <-> 24'd29999
+    .tc <-> clk400Hz
+
+[mux7seg -> clkDiv]  インスタンス: uClkDiv
+  親ファイル: mux7seg.v
+  子ファイル: clkDiv.v
+  不明な向き（宣言未検出）:
+    .clk <-> clk
+    .rstN <-> rstN
+    .maxCount <-> 24'd1200
+    .tc <-> clk10Khz
+
+===== ファイル依存関係（ファイル単位） =====
+
+accTempRegs.v
+  親（このファイルをインスタンス化しているファイル）:
+    - cpuTop.v
+
+alu.v
+  親（このファイルをインスタンス化しているファイル）:
+    - cpuTop.v
+
+clkDiv.v
+  親（このファイルをインスタンス化しているファイル）:
+    - cpuTopWith7seg.v
+    - debounce.v
+    - mux7seg.v
+
+clockReset.v
+  親（このファイルをインスタンス化しているファイル）:
+    - cpuTopWith7seg.v
+
+cpuMicrocycle.v
+  親（このファイルをインスタンス化しているファイル）:
+    - cpuTop.v
+
+cpuTop.v
+  子（このファイルがインスタンス化しているファイル）:
+    - accTempRegs.v
+    - alu.v
+    - cpuMicrocycle.v
+    - pc.v
+    - registerFile.v
+    - rom.v
+    - stack.v
+
+cpuTopWith7seg.v
+  子（このファイルがインスタンス化しているファイル）:
+    - clkDiv.v
+    - clockReset.v
+    - debounce.v
+    - drv7seg.v
+    - mux7seg.v
+    - toggle.v
+
+debounce.v
+  親（このファイルをインスタンス化しているファイル）:
+    - cpuTopWith7seg.v
+  子（このファイルがインスタンス化しているファイル）:
+    - clkDiv.v
+
+decoderWithCc.v
+
+drv7seg.v
+  親（このファイルをインスタンス化しているファイル）:
+    - cpuTopWith7seg.v
+
+io.v
+
+mux7seg.v
+  親（このファイルをインスタンス化しているファイル）:
+    - cpuTopWith7seg.v
+  子（このファイルがインスタンス化しているファイル）:
+    - clkDiv.v
+
+pc.v
+  親（このファイルをインスタンス化しているファイル）:
+    - cpuTop.v
+
+ram.v
+
+registerFile.v
+  親（このファイルをインスタンス化しているファイル）:
+    - cpuTop.v
+
+rom.v
+  親（このファイルをインスタンス化しているファイル）:
+    - cpuTop.v
+
+stack.v
+  親（このファイルをインスタンス化しているファイル）:
+    - cpuTop.v
+
+toggle.v
+  親（このファイルをインスタンス化しているファイル）:
+    - cpuTopWith7seg.v

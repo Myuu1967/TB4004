@@ -1,0 +1,30 @@
+digraph TB4004_filedeps {
+  rankdir=LR;
+  node [shape=folder, fontname="Arial"];
+  "accTempRegs.v" [label="accTempRegs.v"];
+  "alu.v" [label="alu.v"];
+  "clkDiv.v" [label="clkDiv.v"];
+  "clockReset.v" [label="clockReset.v"];
+  "cpuMicrocycle.v" [label="cpuMicrocycle.v"];
+  "cpuTop.v" [label="cpuTop.v"];
+  "cpuTopWith7seg.v" [label="cpuTopWith7seg.v"];
+  "debounce.v" [label="debounce.v"];
+  "decoderWithCc.v" [label="decoderWithCc.v"];
+  "drv7seg.v" [label="drv7seg.v"];
+  "io.v" [label="io.v"];
+  "mux7seg.v" [label="mux7seg.v"];
+  "pc.v" [label="pc.v"];
+  "ram.v" [label="ram.v"];
+  "registerFile.v" [label="registerFile.v"];
+  "rom.v" [label="rom.v"];
+  "stack.v" [label="stack.v"];
+  "toggle.v" [label="toggle.v"];
+  "cpuTop.v" -> "rom.v" [label="inst:1"];
+  "cpuTop.v" -> "alu.v" [label="inst:1"];
+  "cpuTopWith7seg.v" -> "clkDiv.v" [label="inst:1"];
+  "cpuTopWith7seg.v" -> "toggle.v" [label="inst:2"];
+  "cpuTopWith7seg.v" -> "clockReset.v" [label="inst:1"];
+  "cpuTopWith7seg.v" -> "drv7seg.v" [label="inst:3"];
+  "mux7seg.v" -> "clkDiv.v" [label="inst:1"];
+  "debounce.v" -> "clkDiv.v" [label="inst:1"];
+}

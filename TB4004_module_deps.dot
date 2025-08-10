@@ -1,0 +1,30 @@
+digraph TB4004_moddeps {
+  rankdir=LR;
+  node [shape=box, fontname="Arial"];
+  "rom" [label="rom\n(rom.v)"];
+  "alu" [label="alu\n(alu.v)"];
+  "cpuTop" [label="cpuTop\n(cpuTop.v)"];
+  "clkDiv" [label="clkDiv\n(clkDiv.v)"];
+  "accTempRegs" [label="accTempRegs\n(accTempRegs.v)"];
+  "clockReset" [label="clockReset\n(clockReset.v)"];
+  "pc" [label="pc\n(pc.v)"];
+  "stack" [label="stack\n(stack.v)"];
+  "toggle" [label="toggle\n(toggle.v)"];
+  "io" [label="io\n(io.v)"];
+  "drv7seg" [label="drv7seg\n(drv7seg.v)"];
+  "cpuTopWith7seg" [label="cpuTopWith7seg\n(cpuTopWith7seg.v)"];
+  "cpuMicrocycle" [label="cpuMicrocycle\n(cpuMicrocycle.v)"];
+  "ram" [label="ram\n(ram.v)"];
+  "registerFile" [label="registerFile\n(registerFile.v)"];
+  "mux7seg" [label="mux7seg\n(mux7seg.v)"];
+  "decoderWithCc" [label="decoderWithCc\n(decoderWithCc.v)"];
+  "debounce" [label="debounce\n(debounce.v)"];
+  "cpuTop" -> "rom" [label="uRom\n?:4"];
+  "cpuTop" -> "alu" [label="uAlu\n?:9"];
+  "cpuTopWith7seg" -> "clkDiv" [label="u_clkDiv10Hz\n?:4"];
+  "cpuTopWith7seg" -> "toggle" [label="u_toggle1Hz, u_toggle10Hz\n?:8"];
+  "cpuTopWith7seg" -> "clockReset" [label="uclockReset\n?:4"];
+  "cpuTopWith7seg" -> "drv7seg" [label="uDrvB, uDrvC, uDrvD\n?:9"];
+  "mux7seg" -> "clkDiv" [label="uClkDiv\n?:4"];
+  "debounce" -> "clkDiv" [label="clkDivInst\n?:4"];
+}
