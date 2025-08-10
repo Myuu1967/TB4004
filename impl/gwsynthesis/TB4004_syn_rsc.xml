@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Module name="cpuTopWith7seg" Register="18" Alu="15" Lut="19">
-    <SubModule name="u_clkDiv1Hz" Register="23" Lut="40"/>
-    <SubModule name="u_clkDiv10Hz" Register="20" Lut="33"/>
+    <SubModule name="u_clkDiv1Hz" Register="23" Lut="42"/>
+    <SubModule name="u_clkDiv10Hz" Register="20" Lut="36"/>
     <SubModule name="u_toggle1Hz" Register="2" Lut="7"/>
-    <SubModule name="u_toggle10Hz" Register="2" Lut="8"/>
+    <SubModule name="u_toggle10Hz" Register="2" Lut="7"/>
     <SubModule name="uDebounce" Register="4" Lut="1">
         <SubModule name="clkDivInst" Register="15" Lut="29"/>
     </SubModule>

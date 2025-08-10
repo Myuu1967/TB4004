@@ -118,10 +118,10 @@ module alu (
             end
 
             // ---------------------------
-            // SUB: ACC - reg - borrow
+            // SUB: ACC - reg - borrow  ( C=1: no borrow )
             // ---------------------------
             SUB: begin
-                {carryOut, aluResult} = {1'b0, accIn} - opa - carryIn;
+                {carryOut, aluResult} = {1'b0, accIn} - {1'b0, opa} - 5'd1 + {4'd0, carryIn};
             end
 
             // ---------------------------
