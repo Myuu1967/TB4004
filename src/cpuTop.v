@@ -11,29 +11,34 @@ module cpuTop (
     // ======== 内部配線 ========
 
     // cycle(0〜7) と sync
-    wire [2:0] cycle;
+    wire [2:0]  cycle;
     wire sync;
 
     // PC関連
-    wire [3:0] pcLow, pcMid, pcHigh;
+    wire [3:0]  pcLow, pcMid, pcHigh;
 
     // ROM関連
-    wire [3:0] romData;   // 4bit (M1=OPR, M2=OPA)
+    wire [3:0]  romData;   // 4bit (M1=OPR, M2=OPA)
 
     // RAM関連
-    wire [3:0] ramDataOut;
-    wire       ramWe, ramRe;
-    reg  [3:0] bankSel;
+    wire [3:0]  ramDataOut;
+    wire        ramWe, ramRe;
+    reg  [3:0]  bankSel;
     wire [11:0] ramAddr;
     wire [3:0]  ramDin;
 
     // decoder関連
-    wire aluEnable;
-    wire [3:0] aluOp;
-    wire [3:0] aluSubOp;   // ✅ 新規追加
-    wire accWe;
-    wire tempWe;
+    wire        aluEnable;
+    wire [3:0]  aluOp;
+    wire [3:0]  aluSubOp;   // ✅ 新規追加
+    wire        accWe;
+    wire        tempWe;
+    //reg  [1:0]  aluSel;
 
+    wire        bankSelWe;
+    wire [3:0]  bankSelData;
+
+    
     // ACC & Temp
     wire [3:0] accOut;
     wire [3:0] tempOut;
@@ -114,16 +119,15 @@ module cpuTop (
     // ACC → RAMへ直結
     always @(posedge clk or negedge rstN) begin
         if (!rstN) begin
-            bankSel <= 4'b0000;
+            bankSel    <= 4'b0000;
         end else if (bankSelWe) begin
-            bankSel <= bankSelData;
+            bankSel    <= bankSelData;
         end
     end
 
-    assign ramDin = accOut;
+    // RAMアドレス合成例（12bit想定: [11:8]=bank, [7:0]=offset）
+    assign ramDin  = accOut;
     assign ramAddr = { bankSel, pairDout };   // 上位4bitがバンク、下位8bitがレジスタペアの値
-    //assign ramRe = 1'b0;   // WRMだけなら読み出し不要
-
 
 
     // decoder（CC統合）
@@ -136,6 +140,7 @@ module cpuTop (
         .carryFromAlu(carryOut),
         .zeroFromAlu(zeroOut),
         .testFlag(testFlag),
+        .accIn(accOut),
 
         .aluEnable(aluEnable),
         .aluOp(aluOp),

@@ -7,6 +7,7 @@ module decoderWithCc (
     input  wire       carryFromAlu,
     input  wire       zeroFromAlu,
     input  wire       testFlag,     // 外部TESTピン
+    input  wire [3:0] accIn,
 
     // ALU制御信号
     output reg        aluEnable,
@@ -38,7 +39,6 @@ module decoderWithCc (
 
     output reg        bankSelWe,
     output reg [3:0]  bankSelData
-
 );
 
     // ===============================
@@ -132,8 +132,8 @@ module decoderWithCc (
 
             aluSel    <= 2'b00;  // 00=reg, 01=imm, 10=RAM
             regSrcSel <= 1'b0;   // ✅ ← 追加！
-            bankSelWe <= 1'b0;
-            bankSelData <= 4'd0;
+            bankSelWe  = 1'b0;
+            bankSelData = 4'd0;
 
             pairWe   <= 1'b0;
             pairAddr <= 4'd0;
@@ -157,8 +157,8 @@ module decoderWithCc (
             // reset & 毎クロック初期化
             aluSel <= 2'b11;  // 00=reg, 01=imm, 10=RAM, 11=未定義
             regSrcSel <= 1'b0;   // ✅ ← 追加！
-            bankSelWe <= 1'b0;
-            bankSelData <= 4'd0;
+            bankSelWe  = 1'b0;
+            bankSelData = 4'd0;
 
             // 毎サイクル初期化
             pairWe   <= 1'b0;
@@ -420,9 +420,9 @@ module decoderWithCc (
                             end
 
                             4'hD: begin // DCL
+                                bankSelData = accIn; // ★ 直接accInを参照
                                 if (cycle == 3'd7) begin
-                                    bankSelData <= accOut;   // ACCの値をそのままバンク番号に
-                                    bankSelWe   <= 1'b1;
+                                    bankSelWe = 1'b1;  // ★ X3でラッチ
                                 end
                             end
 
