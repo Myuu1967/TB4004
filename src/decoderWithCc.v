@@ -132,8 +132,8 @@ module decoderWithCc (
 
             aluSel    <= 2'b00;  // 00=reg, 01=imm, 10=RAM
             regSrcSel <= 1'b0;   // ✅ ← 追加！
-            bankSelWe  = 1'b0;
-            bankSelData = 4'd0;
+            bankSelWe <= 1'b0;
+            bankSelData <= 4'd0;
 
             pairWe   <= 1'b0;
             pairAddr <= 4'd0;
@@ -305,10 +305,10 @@ module decoderWithCc (
                         end
 
                         RDM: begin
-                            if (cycle == 3'd7) begin
-                                ramRe  <= 1'b1;
-                                accWe  <= 1'b1;
-                            end
+                          if (cycle==3'd6) begin
+                            ramRe<=1'b1; aluSel<=2'b10; aluEnable<=1'b1; aluOp<=LD;
+                          end
+                          if (cycle==3'd7) accWe<=1'b1;
                         end
 
                         ADM: begin
@@ -326,10 +326,10 @@ module decoderWithCc (
                         end
 
                         RD0, RD1, RD2, RD3: begin
-                            if (cycle == 3'd7) begin
-                                ramRe  <= 1'b1;
-                                accWe  <= 1'b1;
-                            end
+                          if (cycle==3'd6) begin
+                            ramRe<=1'b1; aluSel<=2'b10; aluEnable<=1'b1; aluOp<=LD;
+                          end
+                          if (cycle==3'd7) accWe<=1'b1;
                         end
 
                         // ========= ROM 読み出し =========

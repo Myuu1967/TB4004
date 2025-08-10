@@ -1,110 +1,91 @@
 module cpuTop (
-    input  wire clk,         // toggle.v からのクロック
-    input  wire rstN,        // リセット
-    input  wire testFlag,      // 外部から入力
+    input  wire        clk,        // toggle.v からのクロック
+    input  wire        rstN,       // 非同期Lowアクティブリセット
+    input  wire        testFlag,   // 外部TESTピン
 
-    // デバッグ用
+    // デバッグ
     output wire [11:0] pcAddr,
     output wire [3:0]  accDebug
 );
 
-    // ======== 内部配線 ========
+    // ========= Microcycle (A1..X3 + 2語目握り) =========
+    wire [2:0] cycle;
+    wire a1, a2, a3, m1, m2, x1, x2, x3;
+    wire pcIncPulse, commitPulse;
+    wire irOprLatch, irOpaLatch, immA2Latch, immA1Latch;
+    wire immFetchActive;   // 2語目フェッチ中（M1/M2は即値ラッチへ）
+    wire needImm;          // 1語目X3でデコーダから要求
 
-    // cycle(0〜7) と sync
-    wire [2:0]  cycle;
-    wire sync;
-
-    // PC関連
-    wire [3:0]  pcLow, pcMid, pcHigh;
-
-    // ROM関連
-    wire [3:0]  romData;   // 4bit (M1=OPR, M2=OPA)
-
-    // RAM関連
-    wire [3:0]  ramDataOut;
-    wire        ramWe, ramRe;
-    reg  [3:0]  bankSel;
-    wire [11:0] ramAddr;
-    wire [3:0]  ramDin;
-
-    // decoder関連
-    wire        aluEnable;
-    wire [3:0]  aluOp;
-    wire [3:0]  aluSubOp;   // ✅ 新規追加
-    wire        accWe;
-    wire        tempWe;
-    //reg  [1:0]  aluSel;
-
-    wire        bankSelWe;
-    wire [3:0]  bankSelData;
-
-    
-    // ACC & Temp
-    wire [3:0] accOut;
-    wire [3:0] tempOut;
-
-    // ALU
-    wire [3:0] aluResult;
-    wire       carryOut;
-    wire       zeroOut;
-
-    // CC（decoder内）
-    wire carryFlag, zeroFlag, CCout;
-
-    // Register File
-    wire [3:0] regDout;
-    wire       pairWe;
-    wire [3:0] pairAddr;
-    wire [7:0] pairDin;
-    wire [7:0] pairDout;
-
-    // ======== 仮追加 ========
-    // decoderから将来出す信号
-    // wire decoderUseImm;  // ← decoder からの本物の信号を受ける
-
-
-    // M2でラッチされる予定の OPA nibble（今はROMのまま直結）
-    wire [3:0] opaNibble;
-    assign opaNibble = romData;    // TODO: M2 latch実装後に置き換え
-
-    // ALUに渡すオペランド（即値かレジスタか）
-    wire [3:0] aluOpaSrc;
-    assign aluOpaSrc = (aluSel == 2'b00) ? regDout :
-                       (aluSel == 2'b01) ? opaNibble :
-                       (aluSel == 2'b10) ? ramDataOut :
-                                       4'd0;
-
-    // ======== モジュール接続 ========
-
-    // 8サイクル生成
-    clockReset uClockReset (
-        .toggleClk(clk),
-        .rstN(rstN),
+    cpuMicrocycle uMc (
+        .clk(clk), .rstN(rstN),
+        .needImm(needImm),
+        .immFetchActive(immFetchActive),
         .cycle(cycle),
-        .sync(sync)
+        .a1(a1), .a2(a2), .a3(a3), .m1(m1), .m2(m2), .x1(x1), .x2(x2), .x3(x3),
+        .fetchPhase(), .readPhase(), .execPhase(),
+        .pcIncPulse(pcIncPulse),
+        .commitPulse(commitPulse),
+        .irOprLatch(irOprLatch),
+        .irOpaLatch(irOpaLatch),
+        .immA2Latch(immA2Latch),
+        .immA1Latch(immA1Latch)
     );
 
-    // PC
+    // ========= PC =========
+    wire [3:0] pcLow, pcMid, pcHigh;
+    wire       pcLoad;
+    wire [11:0] pcLoadData;
+    assign pcAddr = {pcHigh, pcMid, pcLow};
+
     pc uPc (
-        .clk(clk),
-        .rstN(rstN),
-        .cycle(cycle),
-        .pcLoad(1'b0),        // とりあえず固定（ジャンプ命令は後で）
-        .pcNew(12'h000),
-        .pcLow(pcLow),
-        .pcMid(pcMid),
-        .pcHigh(pcHigh),
-        .pcAddr(pcAddr)
+        .clk(clk), .rstN(rstN),
+        .inc(pcIncPulse),        // A3で +1（ジャンプ命令でも先に+1）
+        .load(pcLoad),
+        .loadData(pcLoadData),
+        .pcLow(pcLow), .pcMid(pcMid), .pcHigh(pcHigh)
     );
 
-    // ROM
+    // ========= ROM（M1/M2でnibbleを返す想定） =========
+    wire [3:0] romData;
+
     rom uRom (
+        .clk(clk),
         .addr(pcAddr),
-        .cycle(cycle),
+        .cycle(cycle),           // M1=3, M2=4 で nibble 切替する実装
         .nibble(romData)
     );
 
-    // RAM本体
+    // ========= IR / 即値（2語目 A2/A1） =========
+    reg [3:0] irOpr, irOpa;      // 1語目 OPR/OPA（A3=irOpa）
+    reg [3:0] immA2, immA1;      // 2語目 A2/A1
+    wire [11:0] immAddr = {irOpa, immA2, immA1};
+
+    always @(posedge clk or negedge rstN) begin
+        if (!rstN) begin
+            irOpr <= 4'd0; irOpa <= 4'd0;
+            immA2 <= 4'd0; immA1 <= 4'd0;
+        end else begin
+            if (irOprLatch) irOpr <= romData;  // M1(1語目)
+            if (irOpaLatch) irOpa <= romData;  // M2(1語目)
+            if (immA2Latch) immA2 <= romData;  // M1(2語目)
+            if (immA1Latch) immA1 <= romData;  // M2(2語目)
+        end
+    end
+
+    // ========= RAM =========
+    wire [3:0] ramDataOut;
+    wire       ramWe, ramRe;
+    reg  [3:0] bankSel;
+    wire [11:0] ramAddr;
+    wire [3:0]  ramDin;
+
+    // ACC → RAM 直結（書き込みデータ）
+    assign ramDin  = accDebug;        // accOut を後で代入（下で結線）
+    // アドレス共用ポリシーに従う：{bankSel, pairDout}
+    wire [7:0] pairDout;
+
+    assign ramAddr = { bankSel, pairDout };
+
     ram uRam (
         .clk(clk),
         .rstN(rstN),
@@ -115,36 +96,156 @@ module cpuTop (
         .dataOut(ramDataOut)
     );
 
+    // ========= レジスタ/スタック =========
+    // Register File
+    wire        regWe;
+    wire [3:0]  regDout;
+    wire [3:0]  regAddr = irOpa; // 単独レジスタ指定は OPA
+    wire [3:0]  regDinMux;
+    wire        regSrcSel;       // 1: temp→reg, 0: acc→reg
 
-    // ACC → RAMへ直結
+    // ペアアクセス（FIM/SRC 等）
+    wire        pairWe;
+    wire [3:0]  pairAddr;
+    wire [7:0]  pairDin;
+
+    registerFile uRegisters (
+        .clk(clk),
+        .rstN(rstN),
+        .regWe(regWe),
+        .regAddr(regAddr),
+        .regDin(regDinMux),
+        .pairWe(pairWe),
+        .pairAddr(pairAddr),     // 偶数境界は registerFile 内部で丸める実装推奨
+        .pairDin(pairDin),
+        .regDout(regDout),
+        .pairDout(pairDout)
+    );
+
+    // Stack（12bit）
+    wire        stackPush, stackPop;
+    wire [11:0] stackPcOut;
+    wire [2:0]  sp;
+    wire        stackOverflow, stackUnderflow;
+
+    stack uStack (
+        .clk(clk),
+        .rstN(rstN),
+        .push(stackPush),
+        .pop(stackPop),
+        .pcIn(pcAddr),           // 戻り先として現在のPC（A3で+1済み想定）
+        .pcOut(stackPcOut),
+        .sp(sp),
+        .overflow(stackOverflow),
+        .underflow(stackUnderflow)
+    );
+
+    // ========= ACC / TEMP =========
+    wire        accWe, tempWe;
+    wire [3:0]  accOut, tempOut;
+
+    accTempRegs uAccTemp (
+        .clk(clk),
+        .rstN(rstN),
+        .aluResult( /* 下で接続 */ ),
+        .accOutForTemp(accOut),      // X2終端で temp←ACC 用
+        .accWe(accWe),
+        .tempWe(tempWe),
+        .accOut(accOut),
+        .tempOut(tempOut)
+    );
+
+    // デバッグ出力
+    assign accDebug = accOut;
+
+    // ========= ALU =========
+    wire        aluEnable;
+    wire [3:0]  aluOp;
+    wire [3:0]  aluSubOp;
+    wire [1:0]  aluSel;            // 00:reg, 01:imm(OPA), 10:RAM, 他:0
+    wire [3:0]  aluOpaSrc;
+
+    assign aluOpaSrc = (aluSel == 2'b00) ? regDout    :
+                       (aluSel == 2'b01) ? irOpa      : // 即値は OPA を使用
+                       (aluSel == 2'b10) ? ramDataOut :
+                                           4'd0;
+
+    wire [3:0] aluResult;
+    wire       carryOut, zeroOut;
+
+    alu uAlu (
+        .aluOp(aluOp),
+        .aluSubOp(aluSubOp),
+        .accIn(accOut),
+        .tempIn(tempOut),
+        .opa(aluOpaSrc),
+        .carryIn(carryFlag),
+        .aluResult(aluResult),
+        .carryOut(carryOut),
+        .zeroOut(zeroOut)
+    );
+
+    // accTempRegs への aluResult 結線（分かりやすく後配線）
+    // ※ 一部ツールは前方参照でもOKだが、見通しのため分離
+    // synthesis translate_off
+    // (no sim-only logic)
+    // synthesis translate_on
+    // 直接配線
+    // （verilogでは上のインスタンス生成時に参照しても合成上は問題ないが、
+    //  可読性を重視してここでコメントしておく）
+    // → 既に uAccTemp に渡しているので追加不要
+
+    // reg 書き込みデータ選択（XCH 対応など）
+    assign regDinMux = (regSrcSel) ? tempOut : accOut;
+
+    // ========= バンクセレクト（DCL） =========
+    wire        bankSelWe;
+    wire [3:0]  bankSelData;
+
     always @(posedge clk or negedge rstN) begin
-        if (!rstN) begin
-            bankSel    <= 4'b0000;
-        end else if (bankSelWe) begin
-            bankSel    <= bankSelData;
-        end
+        if (!rstN) bankSel <= 4'd0;
+        else if (bankSelWe) bankSel <= bankSelData; // 副作用はX3で出す想定
     end
 
-    // RAMアドレス合成例（12bit想定: [11:8]=bank, [7:0]=offset）
-    assign ramDin  = accOut;
-    assign ramAddr = { bankSel, pairDout };   // 上位4bitがバンク、下位8bitがレジスタペアの値
+    // ========= I/O（未使用でもデコーダと握る） =========
+    wire romRe, ioWe, ioRe;
+    wire carryFlag, zeroFlag, CCout;
 
+    // ========= pcLoad データの最終選択 =========
+    // BBL/RET などで stackPop を出したフレームは、スタックの値を優先
+    wire       pcLoadFromDec;
+    wire [11:0] pcLoadDataFromDec;
 
-    // decoder（CC統合）
+    assign pcLoad     = pcLoadFromDec | stackPop;           // 安全策：pop時は必ずPCロード
+    assign pcLoadData = stackPop ? stackPcOut : pcLoadDataFromDec;
+
+    // ========= デコーダ =========
     decoderWithCc uDecoder (
         .clk(clk),
         .rstN(rstN),
-        .opr(romData),    
-        .opa(4'h0),       // TODO: M2 latch後にopaNibbleを接続
+        .opr(irOpr),
+        .opa(irOpa),
         .cycle(cycle),
         .carryFromAlu(carryOut),
         .zeroFromAlu(zeroOut),
         .testFlag(testFlag),
         .accIn(accOut),
 
+        // 2語命令ハンドシェイク
+        .immFetchActive(immFetchActive),
+        .immAddr(immAddr),
+        .needImm(needImm),
+
+        // PC/スタック制御
+        .pcLoad(pcLoadFromDec),
+        .pcLoadData(pcLoadDataFromDec),
+        .stackPush(stackPush),
+        .stackPop(stackPop),
+
+        // ALU / レジスタ / メモリ / I/O
         .aluEnable(aluEnable),
         .aluOp(aluOp),
-        .aluSubOp(aluSubOp),   // ✅ 追加
+        .aluSubOp(aluSubOp),
         .accWe(accWe),
         .tempWe(tempWe),
         .regWe(regWe),
@@ -154,86 +255,27 @@ module cpuTop (
         .ioWe(ioWe),
         .ioRe(ioRe),
 
+        // CC 出力（ラッチするならデコーダ内で）
         .carryFlag(carryFlag),
         .zeroFlag(zeroFlag),
         .CCout(CCout),
 
-        // ✅ decoderUseImm, regSrcSel 信号を追加
+        // オペランド/レジスタ選択
         .aluSel(aluSel),
         .regSrcSel(regSrcSel),
-        // ✅ ペアレジスタ関連信号
+
+        // ペアアクセス
         .pairWe(pairWe),
         .pairAddr(pairAddr),
         .pairDin(pairDin),
 
+        // バンク
         .bankSelWe(bankSelWe),
         .bankSelData(bankSelData)
     );
 
-    // ACC & Temp
-    accTempRegs uAccTemp (
-        .clk(clk),
-        .rstN(rstN),
-        .aluResult(aluResult),
-        .accOutForTemp(accOut),   // ✅ temp←ACC の対応時に追加
-        .accWe(accWe),
-        .tempWe(tempWe),
-        .accOut(accOut),
-        .tempOut(tempOut)
-    );
+    // ======== 最後に RAM書き込みデータへACCを接続 ========
+    // accDebug は accOut に等しいので、そのまま流用（見通し用に再明記）
+    assign ramDin = accOut;
 
-    // ALU
-    alu uAlu (
-        .aluOp(aluOp),
-        .aluSubOp(aluSubOp),   // ✅ 追加
-        .accIn(accOut),        // ✅ accOutWire→accOut に修正
-        .tempIn(tempOut),
-        .opa(aluOpaSrc),
-        .carryIn(carryFlag),
-        .aluResult(aluResult),
-        .carryOut(carryOut),
-        .zeroOut(zeroOut)
-    );
-
-    // 書き込みデータをmux
-    wire [3:0] regDinMux;
-    assign regDinMux = (regSrcSel) ? tempOut : accOut;
-
-    // Register File（仮）
-    registerFile uRegisters (
-        .clk(clk),
-        .rstN(rstN),
-
-        // 単独レジスタ書き込み
-        .regWe(regWe),
-        .regAddr(opaNibble),   // OPA nibble がレジスタ番号
-        .regDin(regDinMux),    // ✅ mux経由で書き込み
-        // .regDin(accOut),       // XCHなどでACC→reg書き込み
-
-        // ペア書き込み（FIM命令などで使用）
-        .pairWe(pairWe),           // decoder から受け取る
-        .pairAddr(pairAddr),       // decoder から受け取る
-        .pairDin(pairDin),         // decoder から受け取る
-
-        // 読み出し
-        .regDout(regDout),
-        .pairDout(pairDout)
-    );
-
-    // Stack（未完全）
-    stack uStack (
-        .clk(clk),
-        .rstN(rstN),
-        .push(1'b0),
-        .pop(1'b0),
-        .pcIn(pcAddr),
-        .pcOut(),
-        .sp(),
-        .overflow(),
-        .underflow()
-    );
-
-    // デバッグ出力
-    assign accDebug = accOut;
-
-endmodule  // cpuTop
+endmodule

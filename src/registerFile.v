@@ -25,6 +25,8 @@ module registerFile (
     // 1. pairAddr は必ず偶数を指定してください（偶数＋奇数のペアとして扱います）
     // 2. regWe と pairWe を同時に High にしないこと（同時書き込みの挙動は未定義）
 
+    wire [3:0] pairBase = {pairAddr[3:1], 1'b0};  // ← 偶数境界で強制
+
     // リセット処理
     always @(posedge clk or negedge rstN) begin
         if (!rstN) begin
@@ -37,15 +39,18 @@ module registerFile (
                 regs[regAddr] <= regDin;
             end
             // ペア書き込み（偶数・奇数同時）
+            // 書き込み部：pairAddr → pairBase に差し替え
             if (pairWe) begin
-                regs[pairAddr]     <= pairDin[7:4];  // 偶数
-                regs[pairAddr + 1] <= pairDin[3:0];  // 奇数
+                regs[pairBase]     <= pairDin[7:4];  // 偶数側
+                regs[pairBase + 1] <= pairDin[3:0];  // 偶数+1（奇数側）
             end
         end
     end
 
+
+
     // 読み出し
     assign regDout  = regs[regAddr];
-    assign pairDout = { regs[pairAddr], regs[pairAddr + 1] };
-
+    // 読み出し部：pairAddr → pairBase に差し替え
+    assign pairDout = { regs[pairBase], regs[pairBase + 1] };
 endmodule
