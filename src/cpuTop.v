@@ -1,4 +1,4 @@
-//`default_nettype none
+`default_nettype none
 
 module cpuTop (
     input  wire        clk,        // toggle.v からのクロック
@@ -58,6 +58,7 @@ module cpuTop (
     wire [3:0] romData;
 
     rom uRom (
+        .clk(clk),
         .addr(pcAddr),
         .cycle(cycle),           // M1=3, M2=4 で nibble 切替する実装
         .nibble(romData)
@@ -286,4 +287,4 @@ module cpuTop (
 
 endmodule
 
-//`default_nettype wire
+`default_nettype wire
