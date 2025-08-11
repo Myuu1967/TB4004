@@ -1,50 +1,22 @@
 module pc (
-    input  wire       clk,
-    input  wire       rstN,
-
-    // cycle[2:0] = 0〜7 (A1〜X3)
-    input  wire [2:0] cycle,
-
-    // ジャンプ／サブルーチン用（あとで使う）
-    input  wire       pcLoad,        // PCを書き換える時にHigh
-    input  wire [11:0] pcNew,        // 新しいPC値
-
-    // 出力
-    output reg  [3:0] pcLow,
-    output reg  [3:0] pcMid,
-    output reg  [3:0] pcHigh,
-    output wire [11:0] pcAddr        // 12bitのフルアドレス
+    input  wire        clk,
+    input  wire        rstN,
+    input  wire [2:0]  cycle,        // 0:A1 1:A2 2:A3 3:M1 4:M2 5:X1 6:X2 7:X3
+    input  wire        pcLoad,       // X3で出す規約
+    input  wire [11:0] pcLoadData,   // 統一名
+    output wire [11:0] pcAddr,       // 現在のPC（= pcReg）
+    output wire [3:0]  pcLow,
+    output wire [3:0]  pcMid,
+    output wire [3:0]  pcHigh
 );
-
-    assign pcAddr = {pcHigh, pcMid, pcLow};
-
-    // PCインクリメント用
-    reg [11:0] pcFull;
+    reg [11:0] pcReg;
 
     always @(posedge clk or negedge rstN) begin
-        if (!rstN) begin
-            pcFull <= 12'd0;
-        end else begin
-            // PC書き換え（ジャンプ命令など）
-            if (pcLoad) begin
-                pcFull <= pcNew;
-            end else if (cycle == 3'd2) begin
-                // A3サイクル（0:A1,1:A2,2:A3）で PC+1
-                pcFull <= pcFull + 12'd1;
-            end
-        end
+        if (!rstN)        pcReg <= 12'h000;
+        else if (pcLoad)  pcReg <= pcLoadData;   // ジャンプ/RET確定
+        else if (cycle==3'd2) pcReg <= pcReg + 12'd1; // A3で+1
     end
 
-    // 4bit分割出力
-    always @(*) begin
-        pcLow  = pcFull[3:0];
-        pcMid  = pcFull[7:4];
-        pcHigh = pcFull[11:8];
-    end
-
-//    assign pcLow  = pcFull[3:0];
-//    assign pcMid  = pcFull[7:4];
-//    assign pcHigh = pcFull[11:8];
-
-
-endmodule  // pc
+    assign pcAddr            = pcReg;
+    assign {pcHigh,pcMid,pcLow} = pcReg;
+endmodule

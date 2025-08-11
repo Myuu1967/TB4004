@@ -35,21 +35,29 @@ module cpuTop (
     wire [3:0] pcLow, pcMid, pcHigh;
     wire       pcLoad;
     wire [11:0] pcLoadData;
-    assign pcAddr = {pcHigh, pcMid, pcLow};
+
+
+    // ========= pcLoad データの最終選択（BBLの復帰を含む）=========
+    wire        pcLoadFromDec;
+    wire [11:0] pcLoadDataFromDec;
+
+    // 最終：decoder or stack（BBL）
+    wire        pcLoad     = pcLoadFromDec | stackPcLoad;
+    wire [11:0] pcLoadData = stackPcLoad ? stackPcOut : pcLoadDataFromDec;
 
     pc uPc (
-        .clk(clk), .rstN(rstN),
-        .inc(pcIncPulse),        // A3で +1（ジャンプ命令でも先に+1）
-        .load(pcLoad),
-        .loadData(pcLoadData),
-        .pcLow(pcLow), .pcMid(pcMid), .pcHigh(pcHigh)
+      .clk(clk), .rstN(rstN),
+      .cycle(cycle),
+      .pcLoad(pcLoad),
+      .pcLoadData(pcLoadData),
+      .pcAddr(pcAddr),
+      .pcLow(pcLow), .pcMid(pcMid), .pcHigh(pcHigh)
     );
 
     // ========= ROM（M1/M2でnibbleを返す想定） =========
     wire [3:0] romData;
 
     rom uRom (
-        .clk(clk),
         .addr(pcAddr),
         .cycle(cycle),           // M1=3, M2=4 で nibble 切替する実装
         .nibble(romData)
@@ -127,6 +135,7 @@ module cpuTop (
     wire [11:0] stackPcOut;
     wire [2:0]  sp;
     wire        stackOverflow, stackUnderflow;
+    wire        stackPcLoad;
 
     stack uStack (
         .clk(clk),
@@ -137,7 +146,8 @@ module cpuTop (
         .pcOut(stackPcOut),
         .sp(sp),
         .overflow(stackOverflow),
-        .underflow(stackUnderflow)
+        .underflow(stackUnderflow),
+        .stackPcLoad(stackPcLoad)
     );
 
     // ========= ACC / TEMP =========
@@ -211,14 +221,6 @@ module cpuTop (
     wire romRe, ioWe, ioRe;
     wire carryFlag, zeroFlag, CCout;
 
-    // ========= pcLoad データの最終選択 =========
-    // BBL/RET などで stackPop を出したフレームは、スタックの値を優先
-    wire       pcLoadFromDec;
-    wire [11:0] pcLoadDataFromDec;
-
-    assign pcLoad     = pcLoadFromDec | stackPop;           // 安全策：pop時は必ずPCロード
-    assign pcLoadData = stackPop ? stackPcOut : pcLoadDataFromDec;
-
     // ========= デコーダ =========
     decoderWithCc uDecoder (
         .clk(clk),
@@ -235,12 +237,6 @@ module cpuTop (
         .immFetchActive(immFetchActive),
         .immAddr(immAddr),
         .needImm(needImm),
-
-        // PC/スタック制御
-        .pcLoad(pcLoadFromDec),
-        .pcLoadData(pcLoadDataFromDec),
-        .stackPush(stackPush),
-        .stackPop(stackPop),
 
         // ALU / レジスタ / メモリ / I/O
         .aluEnable(aluEnable),
@@ -271,7 +267,14 @@ module cpuTop (
 
         // バンク
         .bankSelWe(bankSelWe),
-        .bankSelData(bankSelData)
+        .bankSelData(bankSelData),
+
+        // PC/スタック制御
+        .pcLoad(pcLoadFromDec),
+        .pcLoadData(pcLoadDataFromDec),
+        .stackPush(stackPush),
+        .stackPop(stackPop)
+
     );
 
     // ======== 最後に RAM書き込みデータへACCを接続 ========

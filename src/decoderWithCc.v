@@ -9,6 +9,11 @@ module decoderWithCc (
     input  wire       testFlag,     // 外部TESTピン
     input  wire [3:0] accIn,
 
+    // 2語命令ハンドシェイク
+    input  wire       immFetchActive, // cpuMicrocycle から
+    output reg [11:0] immAddr,        // {A3, A2A1} を出すなら使用（未使用なら将来用で0）
+    output reg        needImm,        // 1語目X3で立てる（JUN/JMS/JCN 等）
+
     // ALU制御信号
     output reg        aluEnable,
     output reg  [3:0] aluOp,
@@ -39,6 +44,12 @@ module decoderWithCc (
 
     output reg        bankSelWe,
     output reg [3:0]  bankSelData
+
+    // PC / スタック制御（cpuTopと口合わせ）
+    output reg        pcLoad,         // JUN/JMS/JCN成立時にX3で1
+    output reg [11:0] pcLoadData,     // 上記のロード値
+    output reg        stackPush,      // JMS の2語目X3で1
+    output reg        stackPop,       // BBL のX3で1（RETは未実装）
 );
 
     // ===============================
@@ -139,6 +150,14 @@ module decoderWithCc (
             pairAddr <= 4'd0;
             pairDin  <= 8'd0;
 
+            needImm     <= 1'b0;
+            immAddr     <= 12'd0;
+
+            pcLoad      <= 1'b0;
+            pcLoadData  <= 12'd0;
+            stackPush   <= 1'b0;
+            stackPop    <= 1'b0;
+
         end else begin
             // --- デフォルト値（毎クロック初期化） ---
             aluEnable <= 1'b0;
@@ -157,13 +176,21 @@ module decoderWithCc (
             // reset & 毎クロック初期化
             aluSel <= 2'b11;  // 00=reg, 01=imm, 10=RAM, 11=未定義
             regSrcSel <= 1'b0;   // ✅ ← 追加！
-            bankSelWe  = 1'b0;
-            bankSelData = 4'd0;
+            bankSelWe <= 1'b0;
+            bankSelData <= 4'd0;
 
             // 毎サイクル初期化
             pairWe   <= 1'b0;
             pairAddr <= 4'd0;
             pairDin  <= 8'd0;
+
+            needImm     <= 1'b0;
+            immAddr     <= 12'd0;
+
+            pcLoad      <= 1'b0;
+            pcLoadData  <= 12'd0;
+            stackPush   <= 1'b0;
+            stackPop    <= 1'b0;
 
             // 全命令共通：X1 (cycle=5) で temp←ACC
             if (cycle == 3'd5) begin
