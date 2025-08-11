@@ -225,6 +225,17 @@ module decoderWithCc (
                     end
                 end
 
+                4'h5: begin // JMS
+                    if (cycle==3'd7) begin
+                      if (!immFetchActive) needImm <= 1'b1;
+                      else begin
+                        stackPush <= 1'b1;       // 戻り先= A3で+1済みのpcAddr（cpuTop側でpcInに接続済み）
+                        pcLoad    <= 1'b1;       // コール先へ
+                        pcLoadData<= immAddr;
+                      end
+                    end
+                end
+
                 INC: begin
                     aluEnable <= 1'b1;   // X2 から ALU計算は常時動く
                     aluOp     <= INC;
@@ -298,6 +309,7 @@ module decoderWithCc (
                     if (cycle == 3'd7) begin
                         accWe    <= 1'b1;
                         // stack からPCを戻す処理も必要だが後で追加
+                        stackPop <= 1'b1;
                     end
                 end
 
