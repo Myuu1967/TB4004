@@ -11,7 +11,7 @@ module decoderWithCc (
 
     // 2語命令ハンドシェイク
     input  wire       immFetchActive, // cpuMicrocycle から
-    output reg [11:0] immAddr,        // {A3, A2A1} を出すなら使用（未使用なら将来用で0）
+    input reg  [11:0] immAddr,        // ★ output→input に変更（cpuTopで生成した即値アドレスを受ける）
     output reg        needImm,        // 1語目X3で立てる（JUN/JMS/JCN 等）
 
     // ALU制御信号
@@ -151,7 +151,6 @@ module decoderWithCc (
             pairDin  <= 8'd0;
 
             needImm     <= 1'b0;
-            immAddr     <= 12'd0;
 
             pcLoad      <= 1'b0;
             pcLoadData  <= 12'd0;
@@ -185,7 +184,6 @@ module decoderWithCc (
             pairDin  <= 8'd0;
 
             needImm     <= 1'b0;
-            immAddr     <= 12'd0;
 
             pcLoad      <= 1'b0;
             pcLoadData  <= 12'd0;
@@ -208,6 +206,22 @@ module decoderWithCc (
                             pairAddr <= {opa[3:1],1'b0};   // 偶数レジスタ
                         //    pairDin  <= 8'h??;             // TODO: ROMのD2D1 nibbleを結合
                         end
+                    end
+                end
+
+                // -------------------------------
+                // JUN: 無条件ジャンプ（12bit）
+                // -------------------------------
+                4'h4 /* JUN */: begin
+                    if (cycle==3'd7) begin      // X3 でのみ確定
+                      if (!immFetchActive) begin
+                        // 1語目X3：次サイクルのM1/M2で第2語を取りに行かせる
+                        needImm <= 1'b1;
+                      end else begin
+                        // 2語目X3：フェッチ完了後、即値アドレスへ飛ぶ
+                        pcLoad     <= 1'b1;
+                        pcLoadData <= immAddr;  // cpuTop 生成の {A3,A2A1}
+                      end
                     end
                 end
 
