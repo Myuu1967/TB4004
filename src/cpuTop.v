@@ -1,3 +1,5 @@
+//`default_nettype none
+
 module cpuTop (
     input  wire        clk,        // toggle.v からのクロック
     input  wire        rstN,       // 非同期Lowアクティブリセット
@@ -33,8 +35,6 @@ module cpuTop (
 
     // ========= PC =========
     wire [3:0] pcLow, pcMid, pcHigh;
-    wire       pcLoad;
-    wire [11:0] pcLoadData;
 
 
     // ========= pcLoad データの最終選択（BBLの復帰を含む）=========
@@ -66,7 +66,6 @@ module cpuTop (
     // ========= IR / 即値（2語目 A2/A1） =========
     reg [3:0] irOpr, irOpa;      // 1語目 OPR/OPA（A3=irOpa）
     reg [3:0] immA2, immA1;      // 2語目 A2/A1
-    wire [11:0] immAddr = {irOpa, immA2, immA1};
 
     always @(posedge clk or negedge rstN) begin
         if (!rstN) begin
@@ -79,6 +78,7 @@ module cpuTop (
             if (immA1Latch) immA1 <= romData;  // M2(2語目)
         end
     end
+    wire [11:0] immAddr = {irOpa, immA2, immA1};
 
     // ========= RAM =========
     wire [3:0] ramDataOut;
@@ -154,10 +154,14 @@ module cpuTop (
     wire        accWe, tempWe;
     wire [3:0]  accOut, tempOut;
 
+    // ★これを追加（uAccTempとuAluの両方で使う4bitバス）
+    wire [3:0]  aluResult;
+
+
     accTempRegs uAccTemp (
         .clk(clk),
         .rstN(rstN),
-        .aluResult( /* 下で接続 */ ),
+        .aluResult(aluResult),
         .accOutForTemp(accOut),      // X2終端で temp←ACC 用
         .accWe(accWe),
         .tempWe(tempWe),
@@ -180,8 +184,7 @@ module cpuTop (
                        (aluSel == 2'b10) ? ramDataOut :
                                            4'd0;
 
-    wire [3:0] aluResult;
-    wire       carryOut, zeroOut;
+    wire       carryFlag, carryOut, zeroOut;
 
     alu uAlu (
         .aluOp(aluOp),
@@ -219,7 +222,7 @@ module cpuTop (
 
     // ========= I/O（未使用でもデコーダと握る） =========
     wire romRe, ioWe, ioRe;
-    wire carryFlag, zeroFlag, CCout;
+    wire zeroFlag, CCout;
 
     // ========= デコーダ =========
     decoderWithCc uDecoder (
@@ -282,3 +285,5 @@ module cpuTop (
     assign ramDin = accOut;
 
 endmodule
+
+//`default_nettype wire

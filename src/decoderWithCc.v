@@ -11,7 +11,7 @@ module decoderWithCc (
 
     // 2語命令ハンドシェイク
     input  wire       immFetchActive, // cpuMicrocycle から
-    input reg  [11:0] immAddr,        // ★ output→input に変更（cpuTopで生成した即値アドレスを受ける）
+    input  wire [11:0] immAddr,        // ★ output→input に変更（cpuTopで生成した即値アドレスを受ける）
     output reg        needImm,        // 1語目X3で立てる（JUN/JMS/JCN 等）
 
     // ALU制御信号
@@ -43,13 +43,13 @@ module decoderWithCc (
     output reg [7:0]  pairDin,
 
     output reg        bankSelWe,
-    output reg [3:0]  bankSelData
+    output reg [3:0]  bankSelData,
 
     // PC / スタック制御（cpuTopと口合わせ）
     output reg        pcLoad,         // JUN/JMS/JCN成立時にX3で1
     output reg [11:0] pcLoadData,     // 上記のロード値
     output reg        stackPush,      // JMS の2語目X3で1
-    output reg        stackPop,       // BBL のX3で1（RETは未実装）
+    output reg        stackPop       // BBL のX3で1（RETは未実装）
 );
 
     // ===============================
@@ -473,9 +473,9 @@ module decoderWithCc (
                             end
 
                             4'hD: begin // DCL
-                                bankSelData = accIn; // ★ 直接accInを参照
+                                bankSelData <= accIn; // ★ 直接accInを参照
                                 if (cycle == 3'd7) begin
-                                    bankSelWe = 1'b1;  // ★ X3でラッチ
+                                    bankSelWe <= 1'b1;  // ★ X3でラッチ
                                 end
                             end
 

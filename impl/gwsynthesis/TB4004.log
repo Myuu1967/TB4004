@@ -6,8 +6,6 @@ Analyzing Verilog file 'F:\@Tanuki_Bayashin\FPGA\TB4004\src\clkDiv.v'
 Analyzing Verilog file 'F:\@Tanuki_Bayashin\FPGA\TB4004\src\clockReset.v'
 Analyzing Verilog file 'F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuMicrocycle.v'
 Analyzing Verilog file 'F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v'
-Undeclared symbol 'carryFlag', assumed default net type 'wire'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":182)
-WARN  (EX3638) : 'carryFlag' is already implicitly declared on line 182("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":212)
 Analyzing Verilog file 'F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v'
 Analyzing Verilog file 'F:\@Tanuki_Bayashin\FPGA\TB4004\src\debounce.v'
 Analyzing Verilog file 'F:\@Tanuki_Bayashin\FPGA\TB4004\src\decoderWithCc.v'
@@ -24,28 +22,36 @@ Compiling module 'cpuTopWith7seg'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWit
 Compiling module 'clkDiv'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\clkDiv.v":1)
 Compiling module 'toggle'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\toggle.v":1)
 Compiling module 'debounce'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\debounce.v":1)
-ERROR (EX3990) : Cannot find port 'inc' on this module("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":42)
-'pc' is declared here("F:\@Tanuki_Bayashin\FPGA\TB4004\src\pc.v":1)
-ERROR (EX3990) : Cannot find port 'load' on this module("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":43)
-'pc' is declared here("F:\@Tanuki_Bayashin\FPGA\TB4004\src\pc.v":1)
-ERROR (EX3990) : Cannot find port 'loadData' on this module("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":44)
-'pc' is declared here("F:\@Tanuki_Bayashin\FPGA\TB4004\src\pc.v":1)
-WARN  (EX3073) : Port 'cycle' remains unconnected for this instance("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":46)
-ERROR (EX3990) : Cannot find port 'clk' on this module("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":52)
-'rom' is declared here("F:\@Tanuki_Bayashin\FPGA\TB4004\src\rom.v":1)
-ERROR (EX3990) : Cannot find port 'immFetchActive' on this module("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":235)
-'decoderWithCc' is declared here("F:\@Tanuki_Bayashin\FPGA\TB4004\src\decoderWithCc.v":1)
-ERROR (EX3990) : Cannot find port 'immAddr' on this module("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":236)
-'decoderWithCc' is declared here("F:\@Tanuki_Bayashin\FPGA\TB4004\src\decoderWithCc.v":1)
-ERROR (EX3990) : Cannot find port 'needImm' on this module("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":237)
-'decoderWithCc' is declared here("F:\@Tanuki_Bayashin\FPGA\TB4004\src\decoderWithCc.v":1)
-ERROR (EX3990) : Cannot find port 'pcLoad' on this module("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":240)
-'decoderWithCc' is declared here("F:\@Tanuki_Bayashin\FPGA\TB4004\src\decoderWithCc.v":1)
-ERROR (EX3990) : Cannot find port 'pcLoadData' on this module("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":241)
-'decoderWithCc' is declared here("F:\@Tanuki_Bayashin\FPGA\TB4004\src\decoderWithCc.v":1)
-ERROR (EX3990) : Cannot find port 'stackPush' on this module("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":242)
-'decoderWithCc' is declared here("F:\@Tanuki_Bayashin\FPGA\TB4004\src\decoderWithCc.v":1)
-ERROR (EX3990) : Cannot find port 'stackPop' on this module("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":243)
-'decoderWithCc' is declared here("F:\@Tanuki_Bayashin\FPGA\TB4004\src\decoderWithCc.v":1)
-Module 'cpuTopWith7seg' remains a black box due to errors in its contents("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v":1)
+Compiling module 'cpuTop'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":3)
+Compiling module 'cpuMicrocycle'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuMicrocycle.v":1)
+Compiling module 'pc'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\pc.v":1)
+Compiling module 'rom'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\rom.v":1)
+Extracting RAM for identifier 'romMem'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\rom.v":16)
+Compiling module 'ram'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\ram.v":1)
+Compiling module 'registerFile'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\registerFile.v":1)
+Compiling module 'stack'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\stack.v":1)
+Compiling module 'accTempRegs'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\accTempRegs.v":1)
+Compiling module 'alu'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\alu.v":4)
+Compiling module 'decoderWithCc'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\decoderWithCc.v":1)
+Compiling module 'clockReset'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\clockReset.v":1)
+Compiling module 'drv7seg'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\drv7seg.v":1)
+Compiling module 'mux7seg'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\mux7seg.v":1)
+NOTE  (EX0101) : Current top module is "cpuTopWith7seg"
+[5%] Running netlist conversion ...
+Running device independent optimization ...
+[10%] Optimizing Phase 0 completed
+[15%] Optimizing Phase 1 completed
+[25%] Optimizing Phase 2 completed
+Running inference ...
+[30%] Inferring Phase 0 completed
+[40%] Inferring Phase 1 completed
+[50%] Inferring Phase 2 completed
+[55%] Inferring Phase 3 completed
+Running technical mapping ...
+[60%] Tech-Mapping Phase 0 completed
+[65%] Tech-Mapping Phase 1 completed
+[75%] Tech-Mapping Phase 2 completed
+[80%] Tech-Mapping Phase 3 completed
+[90%] Tech-Mapping Phase 4 completed
+ERROR (RP0006) : The number(13878(13855 LUTs, 23 ALUs, 0 ROM16s, 0 SSRAMs)) of logic in the design exceeds the resource limit(4608) of current device
 GowinSynthesis finish
