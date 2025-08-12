@@ -55,12 +55,17 @@ module cpuTop (
     );
 
     // ========= ROM（M1/M2でnibbleを返す想定） =========
-    wire [3:0] romData;
+    // どの装置が使う“有効アドレス”かを1本に集約
+    wire [11:0] memAddr =
+        (cycle <= 3'd5) ? pcAddr           // A1/A2/A3/M1/M2
+                        : {bankSel, pairDout}; // X1/X2/X3
 
+    wire [3:0] romData;
+    // ROM/RAMの2KB化はモジュール内でaddr[10:0]マスク運用とする（cpuTopは12bitのまま渡す）
     rom uRom (
         .clk(clk),
-        .addr(pcAddr),
-        .cycle(cycle),           // M1=3, M2=4 で nibble 切替する実装
+        .addr(memAddr),     // rom.v内部で[10:0]に丸める
+        .cycle(cycle),
         .nibble(romData)
     );
 
@@ -85,22 +90,19 @@ module cpuTop (
     wire [3:0] ramDataOut;
     wire       ramWe, ramRe;
     reg  [3:0] bankSel;
-    wire [11:0] ramAddr;
     wire [3:0]  ramDin;
 
     // ACC → RAM 直結（書き込みデータ）
     assign ramDin  = accDebug;        // accOut を後で代入（下で結線）
-    // アドレス共用ポリシーに従う：{bankSel, pairDout}
+    // アドレス共用ポリシー：{bankSel, pairDout}（既存維持）
     wire [7:0] pairDout;
-
-    assign ramAddr = { bankSel, pairDout };
 
     ram uRam (
         .clk(clk),
         .rstN(rstN),
         .ramWe(ramWe),
         .ramRe(ramRe),
-        .addr(ramAddr),
+        .addr(memAddr),     // ram.v内部で[10:0]に丸める
         .dataIn(ramDin),
         .dataOut(ramDataOut)
     );
@@ -183,7 +185,7 @@ module cpuTop (
     assign aluOpaSrc = (aluSel == 2'b00) ? regDout    :
                        (aluSel == 2'b01) ? irOpa      : // 即値は OPA を使用
                        (aluSel == 2'b10) ? ramDataOut :
-                                           4'd0;
+                       (aluSel == 2'b11) ? romIoDataOut;
 
     wire       carryFlag, carryOut, zeroOut;
 

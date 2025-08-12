@@ -20,6 +20,9 @@ module io (
     output reg  [7:0]  ioOut         // LEDなど
 );
 
+    // RAM入力なしポリシー
+//    wire [3:0] ramInputData = 4'h0; // ここから先で使う読み値は常に0
+
     always @(posedge clk or negedge rstN) begin
         if (!rstN) begin
             ioOut <= 8'd0;

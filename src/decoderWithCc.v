@@ -387,15 +387,29 @@ module decoderWithCc (
 
                         // ========= ROM 読み出し =========
                         RDR: begin
-                            if (cycle == 3'd7) begin
-                                ioRe  <= 1'b1;   // ✅ ioRe
-                                accWe <= 1'b1;
-                            end
+                          if (cycle == 3'd6) begin // X2
+                            ioRe      <= 1'b1;     // ← romIoReに接続
+                            aluSel    <= 2'b11;    // ← IO選択（新規）
+                            aluEnable <= 1'b1;
+                            aluOp     <= LD;       // ← ALUのLD経路を使う
+                          end
+                          if (cycle == 3'd7) begin // X3
+                            accWe     <= 1'b1;     // ACC ← ioData
+                          end
                         end
 
                         default: begin
                             // 未定義命令は何もしない
                         end
+
+
+
+
+
+
+
+
+
 
                     endcase
                 end
