@@ -57,8 +57,8 @@ module cpuTop (
     // ========= ROM（M1/M2でnibbleを返す想定） =========
     // どの装置が使う“有効アドレス”かを1本に集約
     wire [11:0] memAddr =
-        (cycle <= 3'd5) ? pcAddr           // A1/A2/A3/M1/M2
-                        : {bankSel, pairDout}; // X1/X2/X3
+        (cycle <= 3'd5) ? pcAddr           // A1/A2/A3/M1/M2/X1
+                        : {bankSel, pairDout}; // X2/X3
 
     wire [3:0] romData;
 
@@ -138,8 +138,6 @@ module cpuTop (
     );
 
     // ALUの入力選択にIOを追加済み（aluSel==2’b11で romIoDataOut）
-
-
 
 
     // ========= レジスタ/スタック =========

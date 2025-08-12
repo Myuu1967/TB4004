@@ -172,13 +172,11 @@ module decoderWithCc (
             ioWe      <= 1'b0;
             ioRe      <= 1'b0;
 
-            // reset & 毎クロック初期化
             aluSel <= 2'b11;  // 00=reg, 01=imm, 10=RAM, 11=未定義
             regSrcSel <= 1'b0;   // ✅ ← 追加！
             bankSelWe <= 1'b0;
             bankSelData <= 4'd0;
 
-            // 毎サイクル初期化
             pairWe   <= 1'b0;
             pairAddr <= 4'd0;
             pairDin  <= 8'd0;
@@ -198,16 +196,34 @@ module decoderWithCc (
             case (opr)
             //    4'h0: // NOP
 
-                // FIM命令（将来用）
+                // OPR=4'h2 グループ: FIM/SRC
                 4'h2: begin
-                    if (opa[0] == 1'b0) begin // FIM（RRR0）
-                        if (cycle == 3'd7) begin
-                            pairWe   <= 1'b1;
-                            pairAddr <= {opa[3:1],1'b0};   // 偶数レジスタ
-                        //    pairDin  <= 8'h??;             // TODO: ROMのD2D1 nibbleを結合
+                    if (opa[0] == 1'b0) begin
+                        // FIM (RRR0) : レジスタペア ← #D2D1
+                        if (!immFetchActive) begin
+                            // 第1語X3で即値フェッチ要求
+                            if (cycle == 3'd7) begin
+                                needImm <= 1'b1;   // 次フレームでM1/M2に即値を取りに行く
+                            end
+                        end else begin
+                            // 第2語（M1:immA2, M2:immA1 がラッチ済み）
+                            if (cycle == 3'd7) begin
+                                pairWe   <= 1'b1;                          // ペア書き込み
+                                pairAddr <= {opa[3:1], 1'b0};              // 偶数境界に丸め
+                                // immAddr = { irOpa, immA2, immA1 } を利用
+                                // 下位8bitが D2D1 に相当
+                                pairDin  <= {immAddr[7:4], immAddr[3:0]};  // = {immA2, immA1}
+                            end
                         end
+                    end else begin
+                    // SRC (RRR1)
+                        if (cycle == 3'd5) begin // X1 で“どのペアか”を提示
+                          pairAddr <= {opa[3:1], 1'b0}; // 偶数境界に丸め
+                        end
+                        // 以降は既存ルールでOK：X2/X3は memAddr が {bankSel, pairDout}
                     end
                 end
+
 
                 // -------------------------------
                 // JUN: 無条件ジャンプ（12bit）

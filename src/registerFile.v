@@ -28,24 +28,21 @@ module registerFile (
     wire [3:0] pairBase = {pairAddr[3:1], 1'b0};  // ← 偶数境界で強制
 
     // リセット処理
+    // 同時Assertは pairWe を優先（好みで逆でもOK）
     always @(posedge clk or negedge rstN) begin
-        if (!rstN) begin
-            for (i = 0; i < 16; i = i + 1) begin
-                regs[i] <= 4'd0;
-            end
-        end else begin
-            // 単独書き込み
-            if (regWe) begin
-                regs[regAddr] <= regDin;
-            end
-            // ペア書き込み（偶数・奇数同時）
-            // 書き込み部：pairAddr → pairBase に差し替え
-            if (pairWe) begin
-                regs[pairBase]     <= pairDin[7:4];  // 偶数側
-                regs[pairBase + 1] <= pairDin[3:0];  // 偶数+1（奇数側）
-            end
+      if (!rstN) begin
+        for (i=0; i<16; i=i+1) regs[i] <= 4'd0;
+      end else begin
+        if (pairWe) begin
+          regs[pairBase]     <= pairDin[7:4];
+          regs[pairBase + 1] <= pairDin[3:0];
+        end else if (regWe) begin
+          regs[regAddr] <= regDin;
         end
+      end
     end
+
+
 
 
 
