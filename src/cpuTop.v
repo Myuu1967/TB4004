@@ -40,10 +40,14 @@ module cpuTop (
     // ========= pcLoad データの最終選択（BBLの復帰を含む）=========
     wire        pcLoadFromDec;
     wire [11:0] pcLoadDataFromDec;
+    // --- ★追加：JINで使うフラグ ---
+    wire        pcLoadUsePair;   // ← decoderがJINのX3で1にする
 
-    // 最終：decoder or stack（BBL）
-    wire        pcLoad     = pcLoadFromDec | stackPcLoad;
-    wire [11:0] pcLoadData = stackPcLoad ? stackPcOut : pcLoadDataFromDec;
+    // ★最終合成：stack優先 → JIN → decoderの順
+    wire        pcLoad     = stackPcLoad | pcLoadUsePair | pcLoadFromDec;
+    wire [11:0] pcLoadData = stackPcLoad   ? stackPcOut :
+                             pcLoadUsePair  ? {pcHigh, pairDout} :
+                                              pcLoadDataFromDec;
 
     pc uPc (
       .clk(clk), .rstN(rstN),
@@ -313,7 +317,9 @@ module cpuTop (
         .pcLoad(pcLoadFromDec),
         .pcLoadData(pcLoadDataFromDec),
         .stackPush(stackPush),
-        .stackPop(stackPop)
+        .stackPop(stackPop),
+
+        .pcLoadUsePair(pcLoadUsePair)
 
     );
 

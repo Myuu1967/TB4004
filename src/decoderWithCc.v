@@ -48,11 +48,14 @@ module decoderWithCc (
     // PC / スタック制御（cpuTopと口合わせ）
     output reg        pcLoad,         // JUN/JMS/JCN成立時にX3で1
     output reg [11:0] pcLoadData,     // 上記のロード値
-    output reg        stackPush,      // JMS の2語目X3で1
-    output reg        stackPop       // BBL のX3で1（RETは未実装）
+    output reg        stackPush,      // JMS の2語目X31
+    output reg        stackPop,       // BBL のX3で1（RETは未実装）
+
+    // JINで使用　PC変更を指示
+    output reg        pcLoadUsePair
 );
 
-    // ===============================
+    // ============================
     // 4004 命令コード localparam
     // ===============================
     localparam NOP = 4'h0;   // No Operation
@@ -224,6 +227,30 @@ module decoderWithCc (
                     end
                 end
 
+                // OPR=4'h3 グループ：FIN/JIN
+                4'h3: begin
+                  if (opa[0] == 1'b0) begin
+                    // -------------------------
+                    // FIN (RRR0) 既存のまま（参考）
+                    //   X3(第1語): needImm=1
+                    //   X3(第2語): regWrite (RRR<=ROM[index])
+                    // -------------------------
+                    // ...（あなたの既存FIN実装）...
+                  end else begin
+                    // -------------------------
+                    // JIN (RRR1): PCmid,low ← (RRR)
+                    // -------------------------
+                    // X1：どのペアを使うか提示（pairDoutがX2/X3で安定）
+                    if (cycle == 3'd5) begin  // X1
+                      pairAddr <= {opa[3:1], 1'b0}; // 偶数境界へ丸め
+                    end
+                    // X3：PCロード要求（cpuTopが {pcHigh, pairDout} を作る）
+                    if (cycle == 3'd7) begin  // X3
+                      pcLoadUsePair <= 1'b1;  // ★新出力
+                      // pcLoadFromDec/pcLoadDataFromDec はJINでは使わない（0のまま）
+                    end
+                  end
+                end
 
                 // -------------------------------
                 // JUN: 無条件ジャンプ（12bit）
