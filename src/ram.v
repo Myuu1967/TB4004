@@ -12,7 +12,11 @@ module ram (
 
     // 同期Write & 同期Read
     always @(posedge clk) begin
-        if (ramWe) ramMem[addr] <= dataIn;
-        dataOut <= ramMem[addr];     // ★同期Read（常時でも良い）
+        if (ramWe) begin
+            ramMem[addr] <= dataIn;
+            dataOut      <= dataIn;      // ← write-first（同サイクルで新値が見える）
+        end else begin
+            dataOut      <= ramMem[addr]; // 通常読み
+        end
     end
 endmodule

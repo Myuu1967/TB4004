@@ -87,7 +87,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">Created Time</td>
-<td>Tue Aug 12 08:02:20 2025
+<td>Tue Aug 12 08:20:19 2025
 </td>
 </tr>
 <tr>
@@ -100,7 +100,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <table class="summary_table">
 <tr>
 <td class="label">Total Power (mW)</td>
-<td>27.234</td>
+<td>27.690</td>
 </tr>
 <tr>
 <td class="label">Quiescent Power (mW)</td>
@@ -108,14 +108,14 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">Dynamic Power (mW)</td>
-<td>1.819</td>
+<td>2.275</td>
 </tr>
 </table>
 <h2><a name="Thermal_Info">Thermal Information:</a></h2>
 <table class="summary_table">
 <tr>
 <td class="label">Junction Temperature</td>
-<td>25.820</td>
+<td>25.833</td>
 </tr>
 <tr>
 <td class="label">Theta JA</td>
@@ -123,7 +123,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">Max Allowed Ambient Temperature</td>
-<td>84.180</td>
+<td>84.167</td>
 </tr>
 </table>
 <h2><a name="Configure_Info">Configure Information:</a></h2>
@@ -192,9 +192,9 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <tr>
 <td>VCC</td>
 <td>2.500</td>
-<td>0.315</td>
+<td>0.497</td>
 <td>9.099</td>
-<td>23.534</td>
+<td>23.990</td>
 </tr>
 <tr>
 <td>VCCX</td>
@@ -222,15 +222,21 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td>Logic</td>
-<td>0.175</td>
+<td>0.304</td>
 <td>NA</td>
-<td>10.710</td>
+<td>8.228</td>
 </tr>
 <tr>
 <td>IO</td>
 <td>3.708
 <td>2.073
 <td>11.058
+</tr>
+<tr>
+<td>BSRAM</td>
+<td>0.325
+<td>NA</td>
+<td>NA</td>
 </tr>
 </table>
 <h2><a name="By_Hierarchy">Power By Hierarchy:</a></h2>
@@ -242,60 +248,84 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td>cpuTopWith7seg</td>
-<td>0.175</td>
-<td>0.175(0.128)</td>
+<td>0.629</td>
+<td>0.629(0.583)</td>
 <tr>
 <td>cpuTopWith7seg/uCpu/</td>
-<td>0.015</td>
-<td>0.015(0.014)</td>
+<td>0.473</td>
+<td>0.473(0.468)</td>
 <tr>
-<td>cpuTopWith7seg/uCpu/uDecoder/</td>
+<td>cpuTopWith7seg/uCpu/uAccTemp/</td>
 <td>0.003</td>
 <td>0.003(0.000)</td>
 <tr>
+<td>cpuTopWith7seg/uCpu/uAlu/</td>
+<td>0.031</td>
+<td>0.031(0.000)</td>
+<tr>
+<td>cpuTopWith7seg/uCpu/uDecoder/</td>
+<td>0.031</td>
+<td>0.031(0.000)</td>
+<tr>
 <td>cpuTopWith7seg/uCpu/uMc/</td>
-<td>0.002</td>
-<td>0.002(0.000)</td>
+<td>0.003</td>
+<td>0.003(0.000)</td>
 <tr>
 <td>cpuTopWith7seg/uCpu/uPc/</td>
-<td>0.007</td>
-<td>0.007(0.000)</td>
+<td>0.012</td>
+<td>0.012(0.000)</td>
+<tr>
+<td>cpuTopWith7seg/uCpu/uRam/</td>
+<td>0.325</td>
+<td>0.325(0.000)</td>
+<tr>
+<td>cpuTopWith7seg/uCpu/uRegisters/</td>
+<td>0.054</td>
+<td>0.054(0.000)</td>
 <tr>
 <td>cpuTopWith7seg/uCpu/uRom/</td>
+<td>0.004</td>
+<td>0.004(0.000)</td>
+<tr>
+<td>cpuTopWith7seg/uCpu/uStack/</td>
+<td>0.005</td>
+<td>0.005(0.000)</td>
+<tr>
+<td>cpuTopWith7seg/uDebounce/</td>
+<td>0.041</td>
+<td>0.041(0.035)</td>
+<tr>
+<td>cpuTopWith7seg/uDebounce/clkDivInst/</td>
+<td>0.035</td>
+<td>0.035(0.000)</td>
+<tr>
+<td>cpuTopWith7seg/uDrvD/</td>
 <td>0.001</td>
 <td>0.001(0.000)</td>
 <tr>
-<td>cpuTopWith7seg/uDebounce/</td>
-<td>0.048</td>
-<td>0.048(0.041)</td>
-<tr>
-<td>cpuTopWith7seg/uDebounce/clkDivInst/</td>
-<td>0.041</td>
-<td>0.041(0.000)</td>
-<tr>
 <td>cpuTopWith7seg/uMux/</td>
-<td>0.030</td>
-<td>0.030(0.018)</td>
+<td>0.035</td>
+<td>0.035(0.019)</td>
 <tr>
 <td>cpuTopWith7seg/uMux/uClkDiv/</td>
-<td>0.018</td>
-<td>0.018(0.000)</td>
+<td>0.019</td>
+<td>0.019(0.000)</td>
 <tr>
 <td>cpuTopWith7seg/u_clkDiv10Hz/</td>
-<td>0.014</td>
-<td>0.014(0.000)</td>
+<td>0.012</td>
+<td>0.012(0.000)</td>
 <tr>
 <td>cpuTopWith7seg/u_clkDiv1Hz/</td>
 <td>0.016</td>
 <td>0.016(0.000)</td>
 <tr>
 <td>cpuTopWith7seg/u_toggle10Hz/</td>
-<td>0.002</td>
-<td>0.002(0.000)</td>
+<td>0.003</td>
+<td>0.003(0.000)</td>
 <tr>
 <td>cpuTopWith7seg/u_toggle1Hz/</td>
-<td>0.004</td>
-<td>0.004(0.000)</td>
+<td>0.002</td>
+<td>0.002(0.000)</td>
 <tr>
 <td>cpuTopWith7seg/uclockReset/</td>
 <td>0.001</td>
@@ -311,22 +341,22 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <tr>
 <td>clk</td>
 <td>50.000</td>
-<td>0.132</td>
+<td>0.119</td>
 </tr>
 <tr>
-<td>uDebounce/clk400Hz</td>
+<td>uDebounce/clk400Hz_5</td>
 <td>50.000</td>
-<td>0.013</td>
+<td>0.018</td>
 </tr>
 <tr>
 <td>cpuClk</td>
 <td>50.000</td>
-<td>0.030</td>
+<td>0.496</td>
 </tr>
 <tr>
-<td>uMux/clk10Khz_5</td>
+<td>uMux/clk10Khz</td>
 <td>50.000</td>
-<td>0.009</td>
+<td>0.008</td>
 </tr>
 </table>
 </div><!-- content -->
