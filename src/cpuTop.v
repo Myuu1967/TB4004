@@ -84,12 +84,30 @@ module cpuTop (
     // RAM本体への誤書き防止（MMIO窓に当たったらRAM書き込みは抑止）
     wire ramWeEff = ramWe & ~ramOutWin;
 
-    // ROM/RAMの2KB化はモジュール内でaddr[10:0]マスク運用とする（cpuTopは12bitのまま渡す）
+     // ★ 新規：FINの第2語だけ“インデックス(=R0R1)からROMを読む”フラグ
+    reg     immFromIndex;
+    wire    finImm;
+
+    always @(posedge clk or negedge rstN) begin
+      if (!rstN) immFromIndex <= 1'b0;
+      else begin
+        // 第2語が終わるX3で自動クリア（= immFetchActiveが落ちる直前）
+        if (immFetchActive && cycle==3'd7) immFromIndex <= 1'b0;
+        // 第1語X3でデコーダがFINを検出したらセット
+        else if (finImm) immFromIndex <= 1'b1;   // ← デコーダから1サイクルだけ立つ信号（下で定義）
+      end
+    end
+
+    // 第2語のM1/M2だけインデックスアドレスを使う（それ以外はPC）
+    wire [11:0] romAddrForFetch =
+        (immFetchActive && immFromIndex) ? {bankSel, pairDout} : pcAddr;
+
+   // ROM/RAMの2KB化はモジュール内でaddr[10:0]マスク運用とする（cpuTopは12bitのまま渡す）
     rom uRom (
-        .clk(clk),
-        .addr(memAddr),     // rom.v内部で[10:0]に丸める
-        .cycle(cycle),
-        .nibble(romData)
+      .clk(clk),
+      .addr(romAddrForFetch),     // rom.v内部で[10:0]に丸める
+      .cycle(cycle),
+      .nibble(romData)
     );
 
     // ========= IR / 即値（2語目 A2/A1） =========
@@ -319,7 +337,8 @@ module cpuTop (
         .stackPush(stackPush),
         .stackPop(stackPop),
 
-        .pcLoadUsePair(pcLoadUsePair)
+        .pcLoadUsePair(pcLoadUsePair),
+        .finImm(finImm)
 
     );
 

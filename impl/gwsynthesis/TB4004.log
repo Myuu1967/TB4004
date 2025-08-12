@@ -55,8 +55,8 @@ Running technical mapping ...
 [75%] Tech-Mapping Phase 2 completed
 [80%] Tech-Mapping Phase 3 completed
 [90%] Tech-Mapping Phase 4 completed
-WARN  (NL0002) : The module "io" instantiated to "uIo" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":142)
-WARN  (NL0002) : The module "registerFile" instantiated to "uRegisters" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":171)
+WARN  (NL0002) : The module "io" instantiated to "uIo" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":160)
+WARN  (NL0002) : The module "registerFile" instantiated to "uRegisters" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":189)
 WARN  (NL0002) : The module "drv7seg" instantiated to "uDrvA" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v":144)
 WARN  (NL0002) : The module "drv7seg" instantiated to "uDrvB" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v":145)
 WARN  (NL0002) : The module "drv7seg" instantiated to "uDrvC" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v":146)

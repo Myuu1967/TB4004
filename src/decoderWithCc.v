@@ -52,7 +52,10 @@ module decoderWithCc (
     output reg        stackPop,       // BBL のX3で1（RETは未実装）
 
     // JINで使用　PC変更を指示
-    output reg        pcLoadUsePair
+    output reg         pcLoadUsePair,
+    // FINで使用　ROM[RRR[0]]をA2A1とおくためのもの
+    output reg         finImm   // ← 第1語X3で1クロックだけ立てる（セット要求）
+
 );
 
     // ============================
@@ -160,6 +163,9 @@ module decoderWithCc (
             stackPush   <= 1'b0;
             stackPop    <= 1'b0;
 
+            pcLoadUsePair <= 1'b0;
+            finImm      <= 1'b0;
+
         end else begin
             // --- デフォルト値（毎クロック初期化） ---
             aluEnable <= 1'b0;
@@ -190,6 +196,9 @@ module decoderWithCc (
             pcLoadData  <= 12'd0;
             stackPush   <= 1'b0;
             stackPop    <= 1'b0;
+
+            pcLoadUsePair <= 1'b0;
+            finImm      <= 1'b0;
 
             // 全命令共通：X1 (cycle=5) で temp←ACC
             if (cycle == 3'd5) begin
@@ -227,27 +236,36 @@ module decoderWithCc (
                     end
                 end
 
-                // OPR=4'h3 グループ：FIN/JIN
+                // OPR=4'h3 グループ：FIN / JIN
                 4'h3: begin
                   if (opa[0] == 1'b0) begin
-                    // -------------------------
-                    // FIN (RRR0) 既存のまま（参考）
-                    //   X3(第1語): needImm=1
-                    //   X3(第2語): regWrite (RRR<=ROM[index])
-                    // -------------------------
-                    // ...（あなたの既存FIN実装）...
+                    // ==========================
+                    // FIN (RRR0) 2語命令（最小：finImmのみ）
+                    // ==========================
+                    if (!immFetchActive) begin
+                      // 第1語X3：即値フェッチ開始（次フレームM1/M2を“インデックス”から）
+                      if (cycle == 3'd7) begin
+                        needImm <= 1'b1;
+                        finImm  <= 1'b1;  // cpuTopの immFromIndex をセット
+                      end
+                    end else begin
+                      // 第2語X3：M1/M2で取得済みの {immA2,immA1} を RRRペアへ書込
+                      if (cycle == 3'd7) begin
+                        pairWe   <= 1'b1;
+                        pairAddr <= {opa[3:1], 1'b0};       // RRRを偶数丸め
+                        pairDin  <= {immAddr[7:4], immAddr[3:0]}; // = {immA2, immA1}
+                      end
+                    end
+
                   end else begin
                     // -------------------------
                     // JIN (RRR1): PCmid,low ← (RRR)
                     // -------------------------
-                    // X1：どのペアを使うか提示（pairDoutがX2/X3で安定）
                     if (cycle == 3'd5) begin  // X1
                       pairAddr <= {opa[3:1], 1'b0}; // 偶数境界へ丸め
                     end
-                    // X3：PCロード要求（cpuTopが {pcHigh, pairDout} を作る）
                     if (cycle == 3'd7) begin  // X3
-                      pcLoadUsePair <= 1'b1;  // ★新出力
-                      // pcLoadFromDec/pcLoadDataFromDec はJINでは使わない（0のまま）
+                      pcLoadUsePair <= 1'b1;       // cpuTopが {pcHigh, pairDout} にしてロード
                     end
                   end
                 end
