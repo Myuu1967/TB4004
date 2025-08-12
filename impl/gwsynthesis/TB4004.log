@@ -25,10 +25,11 @@ Compiling module 'debounce'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\debounce.v":1)
 Compiling module 'cpuTop'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":3)
 Compiling module 'cpuMicrocycle'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuMicrocycle.v":1)
 Compiling module 'pc'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\pc.v":1)
-Compiling module 'rom'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\rom.v":2)
+Compiling module 'rom'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\rom.v":1)
 Extracting RAM for identifier 'romMem'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\rom.v":9)
 Compiling module 'ram'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\ram.v":1)
-Extracting RAM for identifier 'ramMem'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\ram.v":11)
+Extracting RAM for identifier 'ramMem'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\ram.v":12)
+Compiling module 'io'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\io.v":1)
 Compiling module 'registerFile'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\registerFile.v":1)
 Compiling module 'stack'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\stack.v":1)
 Compiling module 'accTempRegs'("F:\@Tanuki_Bayashin\FPGA\TB4004\src\accTempRegs.v":1)
@@ -54,9 +55,12 @@ Running technical mapping ...
 [75%] Tech-Mapping Phase 2 completed
 [80%] Tech-Mapping Phase 3 completed
 [90%] Tech-Mapping Phase 4 completed
+WARN  (NL0002) : The module "io" instantiated to "uIo" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":138)
+WARN  (NL0002) : The module "registerFile" instantiated to "uRegisters" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":169)
 WARN  (NL0002) : The module "drv7seg" instantiated to "uDrvA" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v":144)
 WARN  (NL0002) : The module "drv7seg" instantiated to "uDrvB" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v":145)
 WARN  (NL0002) : The module "drv7seg" instantiated to "uDrvC" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v":146)
+WARN  (NL0002) : The module "drv7seg" instantiated to "uDrvD" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v":147)
 [95%] Generate netlist file "F:\@Tanuki_Bayashin\FPGA\TB4004\impl\gwsynthesis\TB4004.vg" completed
 [100%] Generate report file "F:\@Tanuki_Bayashin\FPGA\TB4004\impl\gwsynthesis\TB4004_syn.rpt.html" completed
 GowinSynthesis finish

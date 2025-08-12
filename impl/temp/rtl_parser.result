@@ -83,7 +83,7 @@
      },
      {
       "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTop.v",
-      "InstLine" : 65,
+      "InstLine" : 84,
       "InstName" : "uRom",
       "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/rom.v",
       "ModuleLine" : 1,
@@ -91,7 +91,7 @@
      },
      {
       "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTop.v",
-      "InstLine" : 100,
+      "InstLine" : 119,
       "InstName" : "uRam",
       "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/ram.v",
       "ModuleLine" : 1,
@@ -99,7 +99,15 @@
      },
      {
       "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTop.v",
-      "InstLine" : 123,
+      "InstLine" : 127,
+      "InstName" : "uIo",
+      "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/io.v",
+      "ModuleLine" : 1,
+      "ModuleName" : "io"
+     },
+     {
+      "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTop.v",
+      "InstLine" : 158,
       "InstName" : "uRegisters",
       "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/registerFile.v",
       "ModuleLine" : 1,
@@ -107,7 +115,7 @@
      },
      {
       "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTop.v",
-      "InstLine" : 143,
+      "InstLine" : 178,
       "InstName" : "uStack",
       "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/stack.v",
       "ModuleLine" : 1,
@@ -115,7 +123,7 @@
      },
      {
       "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTop.v",
-      "InstLine" : 164,
+      "InstLine" : 199,
       "InstName" : "uAccTemp",
       "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/accTempRegs.v",
       "ModuleLine" : 1,
@@ -123,7 +131,7 @@
      },
      {
       "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTop.v",
-      "InstLine" : 192,
+      "InstLine" : 228,
       "InstName" : "uAlu",
       "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/alu.v",
       "ModuleLine" : 4,
@@ -131,7 +139,7 @@
      },
      {
       "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/cpuTop.v",
-      "InstLine" : 231,
+      "InstLine" : 267,
       "InstName" : "uDecoder",
       "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/decoderWithCc.v",
       "ModuleLine" : 1,
@@ -198,13 +206,5 @@
     ]
    }
   ]
- },
- {
-  "InstFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/io.v",
-  "InstLine" : 1,
-  "InstName" : "io",
-  "ModuleFile" : "F:/@Tanuki_Bayashin/FPGA/TB4004/src/io.v",
-  "ModuleLine" : 1,
-  "ModuleName" : "io"
  }
 ]

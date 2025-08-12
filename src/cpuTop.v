@@ -61,6 +61,25 @@ module cpuTop (
                         : {bankSel, pairDout}; // X1/X2/X3
 
     wire [3:0] romData;
+
+    // ===== MMIOウィンドウ判定 =====
+    wire [3:0] portId   = memAddr[3:0];
+
+    wire romInWin  = (memAddr[11]==1'b0) && (memAddr[11:4]==8'h7E); // 0x7E0-0x7EF
+    wire romOutWin = (memAddr[11]==1'b0) && (memAddr[11:4]==8'h7F); // 0x7F0-0x7FF
+    wire ramOutWin = (memAddr[11]==1'b1) && (memAddr[11:4]==8'hFF); // 0xFF0-0xFFF
+
+    // io.v への配線（RDR/WRR/WR0..等を“窓”に振り分け）
+    wire        romIoWe = ioWe & romOutWin & (cycle==3'd7); // X3確定で書く
+    wire        romIoRe = ioRe & romInWin  & (cycle==3'd6); // X2で読む
+    wire [3:0]  romIoAddr = portId;
+
+    wire        ramIoWe = ioWe & ramOutWin & (cycle==3'd7); // RAM側出力窓
+    wire [3:0]  ramIoAddr = portId;
+
+    // RAM本体への誤書き防止（MMIO窓に当たったらRAM書き込みは抑止）
+    wire ramWeEff = ramWe & ~ramOutWin;
+
     // ROM/RAMの2KB化はモジュール内でaddr[10:0]マスク運用とする（cpuTopは12bitのまま渡す）
     rom uRom (
         .clk(clk),
@@ -98,14 +117,30 @@ module cpuTop (
     wire [7:0] pairDout;
 
     ram uRam (
-        .clk(clk),
-        .rstN(rstN),
-        .ramWe(ramWe),
-        .ramRe(ramRe),
-        .addr(memAddr),     // ram.v内部で[10:0]に丸める
-        .dataIn(ramDin),
-        .dataOut(ramDataOut)
+      .clk(clk), .rstN(rstN),
+      .ramWe(ramWeEff), .ramRe(ramRe),
+      .addr(memAddr), .dataIn(ramDin), .dataOut(ramDataOut)
     );
+
+    // io.v インスタンス（外部ピン未使用なら ioIn=0, ioOutは未接続でOK）
+    wire [3:0] romIoDataOut;
+    io uIo (
+      .clk(clk), .rstN(rstN),
+      .romIoWe(romIoWe),
+      .romIoRe(romIoRe),
+      .romIoAddr(romIoAddr),
+      .ramIoWe(ramIoWe),
+      .ramIoAddr(ramIoAddr),
+      .dataIn(accOut),           // 書き込みデータ＝ACC
+      .romIoDataOut(romIoDataOut),
+      .ioIn(8'h00),              // まだ外部入力を使わないなら0固定
+      .ioOut()                   // まだ外部出力を出さないなら未接続でOK
+    );
+
+    // ALUの入力選択にIOを追加済み（aluSel==2’b11で romIoDataOut）
+
+
+
 
     // ========= レジスタ/スタック =========
     // Register File
@@ -185,7 +220,8 @@ module cpuTop (
     assign aluOpaSrc = (aluSel == 2'b00) ? regDout    :
                        (aluSel == 2'b01) ? irOpa      : // 即値は OPA を使用
                        (aluSel == 2'b10) ? ramDataOut :
-                       (aluSel == 2'b11) ? romIoDataOut;
+                       (aluSel == 2'b11) ? romIoDataOut:
+                        4'd0;
 
     wire       carryFlag, carryOut, zeroOut;
 

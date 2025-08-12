@@ -333,84 +333,124 @@ module decoderWithCc (
                 E_: begin
                     case (opa)
 
-                        // ========= RAM 書き込み =========
-                        WRM: if (cycle == 3'd7) ramWe <= 1'b1;
-                        WR0, WR1, WR2, WR3: if (cycle == 3'd7) ramWe <= 1'b1;
+                        // E_（1110）ブロック中。camelCase維持・タイミング統一：X2でread要求、X3でwrite/ACC反映
+                        E_: begin
+                            case (opa)
 
-                        // ========= I/O/ROM 書き込み =========
-                        WMP, WRR : if (cycle == 3'd7) ioWe <= 1'b1;
+                                // ---------------------------
+                                // RAMメモリ書き込み（選択MMキャラ） WRM
+                                // ---------------------------
+                                WRM: if (cycle == 3'd7) begin
+                                    ramWe <= 1'b1;         // ★RAM本体への書き込み意思
+                                    // ※ 0xFF0-0xFFFのMMIO窓ヒットは cpuTop 側で抑止(ramWeEff)し、代わりにioWeに流す
+                                end
 
-                        // =========  書き込み/読み込み　4008/4009, 4289 =========
-                        WPM: ramRe <= ramRe;    // NOP扱い（4008/4009, 4289専用命令 未対応）
-                        // ========= RAM 読み出し =========
-                        SBM: begin
-                            if (cycle == 3'd6) begin
-                                ramRe  <= 1'b1;
-                                aluSel    <= 2'b10;  // 00=reg, 01=imm, 10=RAM
-                                aluEnable <= 1'b1;
-                                aluOp     <= SUB;
-                            end
-                            if (cycle == 3'd7) begin
-                                accWe     <= 1'b1;
-                                carryFlag <= carryFromAlu;
-                                zeroFlag  <= zeroFromAlu;
-                            end
+                                // ---------------------------
+                                // RAM側の“出力ポート”系（MMIO窓へ出力）
+                                //   WMP, WR0, WR1, WR2, WR3
+                                // ---------------------------
+                                WMP, WR0, WR1, WR2, WR3: if (cycle == 3'd7) begin
+                                    ioWe <= 1'b1;          // ★cpuTopのramOutWinならramIoWeに振られる
+                                end
+
+                                // ---------------------------
+                                // ROM出力ポート WRR（0x7F0-0x7FF）
+                                // ---------------------------
+                                WRR: if (cycle == 3'd7) begin
+                                    ioWe <= 1'b1;          // ★cpuTopのromOutWinならromIoWeに振られる
+                                end
+
+                                // ---------------------------
+                                // RAM読んでACC←RAM  RDM
+                                // ---------------------------
+                                RDM: begin
+                                    if (cycle == 3'd6) begin
+                                        ramRe     <= 1'b1; // ★X2で同期RAMのread要求
+                                        aluSel    <= 2'b10; // 00=reg, 01=imm(OPA), 10=RAM, 11=IO
+                                        aluEnable <= 1'b1;
+                                        aluOp     <= LD;   // ACC←opa
+                                    end
+                                    if (cycle == 3'd7) begin
+                                        accWe     <= 1'b1; // X3でACC確定
+                                    end
+                                end
+
+                                // ---------------------------
+                                // RAMを減算（borrow付き） SBM
+                                // ---------------------------
+                                SBM: begin
+                                    if (cycle == 3'd6) begin
+                                        ramRe     <= 1'b1;
+                                        aluSel    <= 2'b10;
+                                        aluEnable <= 1'b1;
+                                        aluOp     <= SUB;
+                                    end
+                                    if (cycle == 3'd7) begin
+                                        accWe     <= 1'b1;
+                                        carryFlag <= carryFromAlu;  // 6502流: not-borrow
+                                        zeroFlag  <= zeroFromAlu;
+                                    end
+                                end
+
+                                // ---------------------------
+                                // RAMを加算（carry付き） ADM
+                                // ---------------------------
+                                ADM: begin
+                                    if (cycle == 3'd6) begin
+                                        ramRe     <= 1'b1;
+                                        aluSel    <= 2'b10;
+                                        aluEnable <= 1'b1;
+                                        aluOp     <= ADD;
+                                    end
+                                    if (cycle == 3'd7) begin
+                                        accWe     <= 1'b1;
+                                        carryFlag <= carryFromAlu;
+                                        zeroFlag  <= zeroFromAlu;
+                                    end
+                                end
+
+                                // ---------------------------
+                                // RAMステータス読み RD0..RD3（読みはRAM経路）
+                                // ---------------------------
+                                RD0, RD1, RD2, RD3: begin
+                                    if (cycle == 3'd6) begin
+                                        ramRe     <= 1'b1;
+                                        aluSel    <= 2'b10;
+                                        aluEnable <= 1'b1;
+                                        aluOp     <= LD;
+                                    end
+                                    if (cycle == 3'd7) begin
+                                        accWe     <= 1'b1;
+                                    end
+                                end
+
+                                // ---------------------------
+                                // ROM入力ポート RDR（0x7E0-0x7EF）
+                                // ---------------------------
+                                RDR: begin
+                                    if (cycle == 3'd6) begin
+                                        ioRe      <= 1'b1; // ★cpuTopのromInWinならromIoReに振られる
+                                        aluSel    <= 2'b11; // IO→ALU opa
+                                        aluEnable <= 1'b1;
+                                        aluOp     <= LD;
+                                    end
+                                    if (cycle == 3'd7) begin
+                                        accWe     <= 1'b1; // ACC ← romIoDataOut
+                                    end
+                                end
+
+                                // ---------------------------
+                                // 未実装（4008/4009, 4289等）
+                                // ---------------------------
+                                WPM: begin
+                                    // NOP扱い
+                                end
+
+                                default: begin
+                                    // NOP
+                                end
+                            endcase
                         end
-
-                        RDM: begin
-                          if (cycle==3'd6) begin
-                            ramRe<=1'b1; aluSel<=2'b10; aluEnable<=1'b1; aluOp<=LD;
-                          end
-                          if (cycle==3'd7) accWe<=1'b1;
-                        end
-
-                        ADM: begin
-                            if (cycle == 3'd6) begin
-                                ramRe  <= 1'b1;
-                                aluSel    <= 2'b10;  // 00=reg, 01=imm, 10=RAM
-                                aluEnable <= 1'b1;
-                                aluOp     <= ADD;
-                            end
-                            if (cycle == 3'd7) begin
-                                accWe     <= 1'b1;
-                                carryFlag <= carryFromAlu;
-                                zeroFlag  <= zeroFromAlu;
-                            end
-                        end
-
-                        RD0, RD1, RD2, RD3: begin
-                          if (cycle==3'd6) begin
-                            ramRe<=1'b1; aluSel<=2'b10; aluEnable<=1'b1; aluOp<=LD;
-                          end
-                          if (cycle==3'd7) accWe<=1'b1;
-                        end
-
-                        // ========= ROM 読み出し =========
-                        RDR: begin
-                          if (cycle == 3'd6) begin // X2
-                            ioRe      <= 1'b1;     // ← romIoReに接続
-                            aluSel    <= 2'b11;    // ← IO選択（新規）
-                            aluEnable <= 1'b1;
-                            aluOp     <= LD;       // ← ALUのLD経路を使う
-                          end
-                          if (cycle == 3'd7) begin // X3
-                            accWe     <= 1'b1;     // ACC ← ioData
-                          end
-                        end
-
-                        default: begin
-                            // 未定義命令は何もしない
-                        end
-
-
-
-
-
-
-
-
-
-
                     endcase
                 end
 
