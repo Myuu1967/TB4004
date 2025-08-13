@@ -122,6 +122,9 @@ module decoderWithCc (
     // ======== CC出力ロジック ========
     reg testSync1, testSync2;
 
+    // デコーダ上部に追加
+    reg zeroFromAluX2;
+
     always @(posedge clk or negedge rstN) begin
         if (!rstN) {testSync1,testSync2} <= 2'b00;
         else       {testSync1,testSync2} <= {testFlag, testSync1};
@@ -135,6 +138,8 @@ module decoderWithCc (
             CCout = ~CCout;
         end
     end
+
+
 
     // ======== 命令デコード ========
     always @(posedge clk or negedge rstN) begin
@@ -174,8 +179,17 @@ module decoderWithCc (
 
             pcLoadUsePair <= 1'b0;
             finImm      <= 1'b0;
+            zeroFromAluX2 <= 1'b0;
 
         end else begin
+
+            // ISZの第2語X2だけ値をラッチ
+            if (cycle==3'd6 && opr==4'h7 && immFetchActive) begin
+                zeroFromAluX2 <= zeroFromAlu;
+            end else begin
+                zeroFromAluX2 <= 1'b0; // それ以外はクリア
+            end
+
             // --- デフォルト値（毎クロック初期化） ---
             aluEnable <= 1'b0;
             aluOp     <= 4'h0;
@@ -329,6 +343,26 @@ module decoderWithCc (
                         aluSel    <= 2'b00;  // 00=reg, 01=imm, 10=RAM
                         carryFlag <= carryFromAlu;
                         zeroFlag  <= zeroFromAlu;
+                    end
+                end
+
+                4'h7: begin // ISZ RRRR, A2A1  : INC reg; if result!=0 then PC←A2A1
+                    if (!immFetchActive) begin
+                        if (cycle == 3'd7) needImm <= 1'b1; // 第1語X3でA2A1要求
+                    end else begin
+                        if (cycle == 3'd6) begin
+                            aluEnable <= 1'b1;   // X2で演算
+                            aluOp     <= INC;
+                            aluSel    <= 2'b00;  // 00=reg（RRRR）
+                        end
+                        if (cycle == 3'd7) begin
+                            regWe <= 1'b1;       // X3でレジスタへ書き戻し
+                            // フラグは更新しない（ACCも触らない）
+                            if (!zeroFromAluX2) begin
+                                pcLoad     <= 1'b1;
+                                pcLoadData <= immAddr; // cpuTop生成の {pcHigh, A2A1}
+                            end
+                        end
                     end
                 end
 

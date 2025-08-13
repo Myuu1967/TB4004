@@ -59,8 +59,6 @@ WARN  (NL0002) : The module "io" instantiated to "uIo" is swept in optimizing("F
 WARN  (NL0002) : The module "registerFile" instantiated to "uRegisters" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTop.v":189)
 WARN  (NL0002) : The module "drv7seg" instantiated to "uDrvA" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v":144)
 WARN  (NL0002) : The module "drv7seg" instantiated to "uDrvB" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v":145)
-WARN  (NL0002) : The module "drv7seg" instantiated to "uDrvC" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v":146)
-WARN  (NL0002) : The module "drv7seg" instantiated to "uDrvD" is swept in optimizing("F:\@Tanuki_Bayashin\FPGA\TB4004\src\cpuTopWith7seg.v":147)
 [95%] Generate netlist file "F:\@Tanuki_Bayashin\FPGA\TB4004\impl\gwsynthesis\TB4004.vg" completed
 [100%] Generate report file "F:\@Tanuki_Bayashin\FPGA\TB4004\impl\gwsynthesis\TB4004_syn.rpt.html" completed
 GowinSynthesis finish

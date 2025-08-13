@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Module name="cpuTopWith7seg" Register="18" Alu="15" Lut="19">
-    <SubModule name="u_clkDiv1Hz" Register="23" Lut="49"/>
-    <SubModule name="u_clkDiv10Hz" Register="20" Lut="41"/>
+    <SubModule name="u_clkDiv1Hz" Register="23" Lut="51"/>
+    <SubModule name="u_clkDiv10Hz" Register="20" Lut="40"/>
     <SubModule name="u_toggle1Hz" Register="2" Lut="1"/>
     <SubModule name="u_toggle10Hz" Register="2" Lut="1"/>
     <SubModule name="uDebounce" Register="4" Lut="1">
-        <SubModule name="clkDivInst" Register="15" Lut="37"/>
+        <SubModule name="clkDivInst" Register="15" Lut="38"/>
     </SubModule>
     <SubModule name="uCpu" Register="12" Lut="15">
-        <SubModule name="uMc" Register="4" Lut="7"/>
-        <SubModule name="uPc" Register="12" Lut="35"/>
+        <SubModule name="uMc" Register="4" Lut="6"/>
+        <SubModule name="uPc" Register="12" Lut="36"/>
         <SubModule name="uRom" Register="2" Lut="6"/>
         <SubModule name="uRam" Bsram="1"/>
-        <SubModule name="uStack" Register="88" Lut="62"/>
-        <SubModule name="uAccTemp" Register="4"/>
-        <SubModule name="uAlu" Alu="8" Lut="13"/>
-        <SubModule name="uDecoder" Register="23" Lut="30"/>
+        <SubModule name="uStack" Register="88" Lut="60"/>
+        <SubModule name="uAccTemp" Register="4" Lut="1"/>
+        <SubModule name="uAlu" Alu="8" Lut="10"/>
+        <SubModule name="uDecoder" Register="23" Lut="33"/>
     </SubModule>
     <SubModule name="uclockReset" Lut="3"/>
+    <SubModule name="uDrvC" Lut="1"/>
+    <SubModule name="uDrvD" Lut="1"/>
     <SubModule name="uMux" Register="3" Lut="55">
-        <SubModule name="uClkDiv" Register="11" Lut="18"/>
+        <SubModule name="uClkDiv" Register="11" Lut="20"/>
     </SubModule>
 </Module>
